@@ -1,0 +1,62 @@
+# GitHub Actions 工作流程文件
+name: 自动部署为 GitPage 静态网站
+
+on:
+  push:
+    branches: [master] # 当推送到 master 分支时触发
+  workflow_dispatch: # 允许手动触发
+
+# 官方 actions/deploy-pages 需要的权限
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 避免同时部署冲突
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  # 构建 job
+  build:
+    name: 构建 VitePress 站点
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true
+
+    steps:
+      - name: 1、检出代码
+        uses: actions/checkout@v4
+
+      - name: 2、安装 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 3、安装 pnpm
+        run: npm install -g pnpm
+
+      - name: 4、安装依赖
+        run: pnpm install --frozen-lockfile
+
+      - name: 5、构建 VitePress 站点
+        run: pnpm run docs:build
+
+      - name: 6、上传构建产物（artifact）
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist # 对应你的 VitePress outDir 配置
+
+  # 部署 job
+  deploy:
+    name: 部署到 GitHub Pages
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 部署到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
