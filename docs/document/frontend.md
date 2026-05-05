@@ -57,7 +57,7 @@ TipModal.msgSuccess('成功反馈', { duration: 2000 })
 
 ## 缓存使用
 
-`CacheUtil` 基于 `localStorage` 实现，**模拟 Redis 风格的键值存取**，方便前端开发者提前熟悉缓存操作模式，平滑向全栈过渡。
+`CacheUtil` 基于 `localStorage` 实现，[**模拟 Redis 风格的键值存取**](https://mp.weixin.qq.com/s/miushZ-BDtrGo7_L4km8Hg)，方便前端开发者提前熟悉缓存操作模式，平滑向全栈过渡。
 
 ```typescript
 // 1、定义缓存键名常量（统一管理，避免字面量散落）

@@ -25,4 +25,11 @@ export const sidebar: DefaultTheme.Sidebar = [
       { text: '更新日志', link: '/guide/changelog' },
     ],
   },
+  {
+    text: '其它',
+    items: [
+      { text: '常见问题', link: '/other/faq.md' },
+      { text: '捐赠支持', link: '/other/donate.md' },
+    ],
+  },
 ]
