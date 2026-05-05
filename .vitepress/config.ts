@@ -24,7 +24,9 @@ export default defineConfig({
     nav: navbar,
     sidebar: sidebar,
     sidebarMenuLabel: '菜单',
-    outlineTitle: '本页目录',
+    darkModeSwitchLabel: '主题',
+    returnToTopLabel: '返回顶部',
+    outlineTitle: '页面导航',
     outline: 'deep',
     lastUpdated: {
       text: '最近更新',
@@ -37,6 +39,11 @@ export default defineConfig({
       { icon: 'github', link: 'https://github.com/Ace627/YunHe-Vue' },
       { icon: 'gitee', link: 'https://gitee.com/decade9527/YunHe-Vue' },
     ],
+    footer: {
+      // message: 'Released under the MIT License.',
+      // copyright: 'Copyright © 2026-present 当时只道是寻常',
+      copyright: 'MIT Licensed | Copyright © 2026-present 当时只道是寻常',
+    },
   },
 
   vite: {

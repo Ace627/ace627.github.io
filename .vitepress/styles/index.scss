@@ -1,6 +1,18 @@
 @use './variables.scss';
 @use './reset.css';
 
-h2.text {
-  font-weight: bold;
-}
+// h2.text.text {
+//   position: relative;
+//   padding-left: 8px;
+//   font-weight: bold;
+//   &::before {
+//     content: '';
+//     position: absolute;
+//     top: 50%;
+//     left: 0;
+//     transform: translateY(-50%);
+//     width: 4px;
+//     height: 50%;
+//     background-color: var(--vp-c-brand);
+//   }
+// }
