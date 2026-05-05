@@ -108,3 +108,39 @@ export * from './cache/token.cache'
 const { sys_normal_disable, sys_user_gender } = useDict('sys_normal_disable', 'sys_user_gender')
 </script>
 ```
+
+## 表格使用
+
+我们只是在完整保留 `el-table` 全部原生 API 与特性的基础上，克制地加入了 `columns` 配置化渲染和 `loading` 加载态这两项最常用的增强，其余用法与原生完全一致，零学习成本，即拿即用，用最小封装换取最高效率，坚决杜绝过度抽象。
+
+```vue
+<template>
+  <ProTable ref="tableRef" :loading :data="list" :columns>
+    <template #status="{ row }">
+      <DictTag :options="sys_normal_disable" :value="row.status" />
+    </template>
+    <template #action="{ row }">
+      <el-link type="primary">修改</el-link>
+      <el-link type="primary">删除</el-link>
+    </template>
+  </ProTable>
+</template>
+
+<script setup lang="ts">
+import type { ProTableColumn } from '@/types'
+
+const tableRef = useTemplateRef('tableRef')
+const loading = ref(false)
+const list = ref<UserEntity[]>([])
+
+// ProTableColumn 兼容 el-table-column 全部属性，prop 有泛型约束
+const columns: ProTableColumn<UserEntity>[] = [
+  { align: 'center', type: 'selection' },
+  { align: 'center', type: 'index', label: '序号', width: 64 },
+  { align: 'center', prop: 'username', label: '用户账号', showOverflowTooltip: true },
+  { align: 'center', prop: 'status', label: '状态', slot: 'status', width: 80 },
+  { align: 'center', prop: 'createTime', label: '创建时间', width: 160 },
+  { align: 'center', slot: 'action', label: '操作', fixed: 'right', minWidth: 120 },
+]
+</script>
+```
