@@ -17,13 +17,14 @@ concurrency:
   group: pages
   cancel-in-progress: false
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   # 构建 job
   build:
     name: 构建 VitePress 站点
     runs-on: ubuntu-latest
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - name: 1、检出代码
