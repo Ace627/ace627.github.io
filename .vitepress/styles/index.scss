@@ -1,18 +1,11 @@
 @use './variables.scss';
 @use './reset.css';
 
-// h2.text.text {
-//   position: relative;
-//   padding-left: 8px;
-//   font-weight: bold;
-//   &::before {
-//     content: '';
-//     position: absolute;
-//     top: 50%;
-//     left: 0;
-//     transform: translateY(-50%);
-//     width: 4px;
-//     height: 50%;
-//     background-color: var(--vp-c-brand);
-//   }
-// }
+// 官方推荐的切换开关样式
+// https://vitepress.dev/zh/guide/extending-default-theme#使用视图过渡-api
+.VPSwitchAppearance {
+  width: 22px !important;
+}
+.VPSwitchAppearance .check {
+  transform: none !important;
+}

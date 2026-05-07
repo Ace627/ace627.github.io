@@ -39,6 +39,30 @@ export default defineConfig({
       { icon: 'github', link: 'https://github.com/Ace627/YunHe-Vue' },
       { icon: 'gitee', link: 'https://gitee.com/decade9527/YunHe-Vue' },
     ],
+    search: {
+      provider: 'local',
+      options: {
+        locales: {
+          root: {
+            translations: {
+              button: {
+                buttonText: '搜索',
+              },
+              modal: {
+                displayDetails: '显示详细列表',
+                resetButtonTitle: '重置搜索',
+                noResultsText: '没有结果',
+                footer: {
+                  selectText: '选择',
+                  navigateText: '导航',
+                  closeText: '关闭',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
     footer: {
       // message: 'Released under the MIT License.',
       // copyright: 'Copyright © 2026-present 当时只道是寻常',
