@@ -43,10 +43,9 @@ async function toggleAppearance(event: MouseEvent) {
   await transition.ready
   // 若切换到深色模式，旧视图使用大圆 -> 小圆；新视图反之
   // 为视图过渡的旧/新快照的根伪元素添加动画
-  document.documentElement.animate(
-    { clipPath: isDark.value ? clipPath.reverse() : clipPath },
-    { duration: 300, easing: 'ease-in', fill: 'forwards', pseudoElement: `::view-transition-${isDark.value ? 'old' : 'new'}(root)` },
-  )
+  const easing = 'cubic-bezier(0.28, 0, 0.44, 1)' // 苹果风格的动画曲线
+  const pseudoElement = isDark.value ? '::view-transition-old(root)' : '::view-transition-new(root)'
+  document.documentElement.animate({ clipPath: isDark.value ? clipPath.reverse() : clipPath }, { duration: 500, easing, fill: 'forwards', pseudoElement })
 }
 
 // 向子组件提供主题切换方法

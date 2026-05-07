@@ -49,6 +49,9 @@ export default defineConfig({
   vite: {
     // 因为 srcDir = 'docs'，public 目录需要相对于 docs 向上找一级到根目录
     publicDir: '../public',
+    server: {
+      port: 8080,
+    },
     build: {
       rollupOptions: {
         onwarn(warning, warn) {

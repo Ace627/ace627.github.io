@@ -2,7 +2,7 @@ import type { DefaultTheme } from 'vitepress'
 
 export const navbar: DefaultTheme.NavItem[] = [
   { text: '首页', link: '/' },
-  // { text: '效果案例', link: '/example/tpljz.md' },
+
   {
     text: 'AI',
     items: [
@@ -12,6 +12,8 @@ export const navbar: DefaultTheme.NavItem[] = [
       { text: 'Element-Plus-X', link: 'https://element-plus-x.com/zh' },
     ],
   },
+  // { text: '来财', link: '/other/fund.md' },
+  // { text: '个人简历', link: '/other/resume.md' },
   {
     text: '托管平台',
     items: [

@@ -17,9 +17,6 @@ concurrency:
   group: pages
   cancel-in-progress: false
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   # 构建 job
   build:
@@ -32,13 +29,16 @@ jobs:
         with:
           fetch-depth: 0 # 如果未启用 lastUpdated，则不需要完整历史记录
 
-      - name: 2、安装 Node.js
-        uses: actions/setup-node@v4
+      - name: 2、安装 pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: 20
+          version: 10 # 与你项目使用的 pnpm 大版本一致
 
-      - name: 3、安装 pnpm
-        run: npm install -g pnpm
+      - name: 3、安装 Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: 'pnpm' # 自动缓存 pnpm 依赖，大幅提速
 
       - name: 4、安装依赖
         run: pnpm install --frozen-lockfile
@@ -46,7 +46,7 @@ jobs:
       - name: 5、构建 VitePress 站点
         run: pnpm run docs:build
 
-      - name: 6、上传构建产物（artifact）
+      - name: 6、上传构建产物
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist # 对应你的 VitePress outDir 配置
@@ -62,4 +62,4 @@ jobs:
     steps:
       - name: 部署到 GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

@@ -29,6 +29,7 @@ export const sidebar: DefaultTheme.Sidebar = [
     text: '其它',
     items: [
       { text: '常见问题', link: '/other/faq.md' },
+      { text: 'SKILLS', link: '/openai/skills.md' },
       { text: '捐赠支持', link: '/other/donate.md' },
     ],
   },

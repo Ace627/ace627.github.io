@@ -14,7 +14,7 @@ hero:
       link: /guide/introduction
     - theme: alt
       text: 提意见
-      link: https://gitee.com/decade9527/YunHe-Vue/issues
+      link: https://github.com/Ace627/YunHe-Vue/issues
     - theme: alt
       text: 交流群
       link: http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=nipJqdnRrHgP7jjLJzbuGwyayLaqrrVA&authKey=MuJj6WXuUP4QQTvs4fMAx1Pw4skUXSLYbvXVXi2X878%2FhmgrD1dxd%2BaXrHK8%2FRb6&noverify=0&group_code=1041747918
