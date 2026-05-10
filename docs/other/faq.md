@@ -16,3 +16,21 @@
 - 在 `src/plugins/modules/global-component.ts` 中注册全局组件
 - 在 `types/global-component.d.ts` 中注册全局组件类型（提供 TS 提示）
 - 之后即可在任意页面直接使用 `<MyComponent />`
+
+## 如何使用组件缓存
+
+- **问题背景**：动态加载的组件没有静态 name，KeepAlive 无法匹配导致缓存失效
+- **传统做法**：手动写 `defineOptions({ name: 'xxx' })`，但页面多易遗漏
+- **解决方案**：在组件加载时自动注入 name
+
+```typescript
+// router.helper.ts
+export function loadView(componentPath: string) {
+  // ...
+  const componentName = upperFirst(camelCase(componentPath.replace('index', '')))
+  const component = views[path]
+  return () => component().then((comp) => ((comp.default.name = componentName), comp))
+}
+```
+
+- **使用说明**：动态页面无需手动写 `defineOptions`，只有静态路由（如 404）才需要
