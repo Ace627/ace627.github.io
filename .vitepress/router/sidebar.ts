@@ -23,6 +23,7 @@ export const sidebar: DefaultTheme.Sidebar = [
       { text: '快速上手', link: '/guide/quick-start' },
       { text: '前端手册', link: '/document/frontend.md' },
       { text: '后端手册', link: '/document/backend.md' },
+      { text: '技能说明', link: '/guide/skills.md' },
       { text: '更新日志', link: '/guide/changelog' },
     ],
   },
@@ -30,7 +31,6 @@ export const sidebar: DefaultTheme.Sidebar = [
     text: '其它',
     items: [
       { text: '常见问题', link: '/other/faq.md' },
-      { text: 'SKILLS', link: '/openai/skills.md' },
       { text: '捐赠支持', link: '/other/donate.md' },
     ],
   },
