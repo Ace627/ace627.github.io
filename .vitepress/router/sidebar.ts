@@ -23,6 +23,7 @@ export const sidebar: DefaultTheme.Sidebar = [
       { text: '快速上手', link: '/guide/quick-start' },
       { text: '前端手册', link: '/document/frontend.md' },
       { text: '后端手册', link: '/document/backend.md' },
+      { text: '前端面试题', link: '/interview/frontend.md' },
       { text: '技能说明', link: '/guide/skills.md' },
       { text: '更新日志', link: '/guide/changelog' },
     ],
