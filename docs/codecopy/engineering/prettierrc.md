@@ -1,5 +1,7 @@
 # Prettier 格式化配置
 
+`prettier.config.cjs`
+
 ```javascript
 /**
  * 修改配置后请务必重启编辑器，否则会不生效或延迟生效

@@ -24,8 +24,9 @@ export const sidebar: DefaultTheme.Sidebar = {
   ],
   '/codecopy/': [
     {
-      text: '代码小抄',
+      text: 'TypeScript',
       items: [
+        { text: '校验方法合集', link: '/codecopy/typescript/validate' },
         { text: '复制文本到剪贴板', link: '/codecopy/typescript/copy-text' },
         { text: 'ElMessage 二次封装', link: '/codecopy/typescript/tip-modal' },
         { text: 'LocalStorage 二次封装', link: '/codecopy/typescript/cache-util' },
