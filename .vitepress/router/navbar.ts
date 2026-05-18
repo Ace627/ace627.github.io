@@ -2,6 +2,7 @@ import type { DefaultTheme } from 'vitepress'
 
 export const navbar: DefaultTheme.NavItem[] = [
   { text: '🏠 首页', link: '/' },
+  { text: '📝 代码小抄', link: '/codecopy/typescript/tip-modal' },
   {
     text: '🤖 AI',
     items: [
