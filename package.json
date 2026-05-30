@@ -11,10 +11,10 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.13.1",
+  "packageManager": "pnpm@11.5.0",
   "devDependencies": {
-    "@types/node": "^25.6.0",
-    "sass": "^1.99.0",
+    "@types/node": "^25.9.1",
+    "sass": "^1.100.0",
     "vitepress": "2.0.0-alpha.17"
   }
 }

@@ -28,3 +28,9 @@
 ## 如何使用组件缓存
 
 在 Vue 动态路由场景下，动态加载的组件没有静态 name，导致 KeepAlive 无法正确匹配组件实例，缓存机制随之失效。传统做法是在每个动态页面中手动编写 `defineOptions({ name: 'xxx' })`，但动态路由页面数量多，一旦遗漏某个页面就会导致该页面缓存失效，维护成本极高。针对这一痛点，我们采用在组件加载阶段自动注入 name 的方案：通过 `upperFirst` 和 `camelCase` 自动将路由路径转换为 PascalCase 组件名，并在异步加载完成后注入到 `comp.default.name` 上，使 KeepAlive 能准确识别并缓存每个动态页面。由此所有动态页面无需手动编写 `defineOptions`，只有少数静态路由（如 404）才需手动设置 name，大幅降低维护成本。
+
+## 宝塔的 Docker 容器编排怎么写
+
+- `docker-compose.yaml` 去掉 `build` 配置项即可
+- 然后按照 `.env.example` 配置环境变量 `env` 文件
+- 最后启动容器即可
