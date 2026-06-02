@@ -18,6 +18,7 @@ export const sidebar: DefaultTheme.Sidebar = {
       text: '其它',
       items: [
         { text: '常见问题', link: '/guide/faq.md' },
+        { text: '常用脚本', link: '/guide/scripts.md' },
         { text: '捐赠支持', link: '/guide/donate.md' },
       ],
     },
