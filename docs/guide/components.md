@@ -9,6 +9,7 @@
 | `ProPagination`| 分页组件，兼容 el-pagination 全部属性    |
 | `ProTooltip`   | 增强提示组件，文字超长自动省略           |
 | `ProChart`     | ECharts 图表封装，自适应容器尺寸         |
+| `RightToolbar` | 列表页右侧工具栏：搜索显隐、刷新、列显隐 |
 | `DictTag`      | 字典标签回显                             |
 | `SvgIcon`      | SVG 图标组件                             |
 | `IconSelect`   | 图标选择器                               |
@@ -54,6 +55,7 @@ const columns: ProTableColumn<UserEntity>[] = [
 | -------- | ------------------ | -------------------------------------- |
 | `columns`| `ProTableColumn[]` | 渲染列配置，兼容 el-table-column 全部属性 |
 | `loading`| `boolean`          | 表格数据加载状态                       |
+| `hiddenColumnKeys` | `string[]` | 隐藏列 key 数组，渲染前过滤，一般由 `RightToolbar` 的 v-model 接管 |
 
 - `ProTableColumn` 的 `prop` 有泛型约束，严格对应行数据属性名，杜绝手写错误
 - `slot` 指定自定义渲染列的插槽名
@@ -163,6 +165,49 @@ const chartOptions: EChartsOption = {
 | ------------- | --------------- | ------------------------------------------ |
 | `options`     | `EChartsOption` | ECharts 官方配置项，遵循官方规范           |
 | `customClass` | `string`        | 自定义类名，可通过 `h-300px` 等控制宽高    |
+
+## RightToolbar
+
+列表页右侧工具栏，与 `ProTable` / `ProSearch` 配套使用，提供三项能力：显隐搜索区域、刷新列表、配置列显隐（下拉勾选）。列显隐状态可通过 `storageKey` 持久化到 localStorage，下次进入页面自动恢复。
+
+```vue
+<template>
+  <div class="mb-16px flex items-center justify-between">
+    <div>
+      <!-- 左侧：操作按钮 -->
+    </div>
+    <RightToolbar
+      v-model:show-search="showSearch"
+      v-model:hidden-column-keys="hiddenColumnKeys"
+      :columns="columns"
+      storage-key="system:user"
+      @refresh="getList"
+    />
+  </div>
+
+  <ProTable :data="list" :columns :hidden-column-keys="hiddenColumnKeys" />
+</template>
+
+<script setup lang="ts">
+/** 搜索区域显隐（RightToolbar v-model 控制），经 ProSearch 的 v-show 使用 */
+const showSearch = ref(true)
+/** 隐藏列 key 数组（RightToolbar v-model 控制），转传给 ProTable 过滤渲染列 */
+const hiddenColumnKeys = ref<string[]>([])
+</script>
+```
+
+| 属性               | 类型               | 默认值 | 说明                                                       |
+| ------------------ | ------------------ | ------ | ---------------------------------------------------------- |
+| `search`           | `boolean`          | `true` | 是否显示「隐藏/显示搜索」按钮                              |
+| `showSearch`       | `boolean`          | `true` | 搜索区域显隐状态（`v-model:showSearch`）                   |
+| `columns`          | `ProTableColumn[]` | `[]`   | 列配置（只读，用于渲染勾选列表）；为空则不显示「列设置」按钮 |
+| `hiddenColumnKeys` | `string[]`         | `[]`   | 隐藏列 key 数组（`v-model:hiddenColumnKeys`）              |
+| `storageKey`       | `string`           | `''`   | 列显隐 localStorage 记忆 key；不传则不记忆                 |
+
+事件：`@refresh` —— 点击刷新按钮后触发，一般在此重新拉取列表。
+
+- 列 key 的生成规则与 `ProTable` 内部一致：`type` > `prop` > `slot` > `column-${index}`，直接把 `columns` 传进来即可，无需关心 key 细节
+- `selection` / `index` 系统列与操作列（固定右侧的插槽列）会自动排除，不出现在勾选列表中
 
 ## DictTag
 
