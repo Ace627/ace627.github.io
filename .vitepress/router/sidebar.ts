@@ -40,6 +40,7 @@ export const sidebar: DefaultTheme.Sidebar = {
             { text: '参数验证', link: '/guide/validation' },
             { text: '接口限流', link: '/guide/throttle' },
             { text: '防重复提交', link: '/guide/repeat-submit' },
+            { text: '登录失败锁定', link: '/guide/login-lock' },
           ],
         },
         { text: '更新日志', link: '/guide/changelog' },
