@@ -4,7 +4,9 @@ pageClass: page-changelog
 
 # 更新日志
 
-## v1.1.0 0000-00-00 dev
+## 2026-09-24 v1.1.0
+
+> Git Commit: e1229be36b5a5df4ed422f69e3d9291c4a93c826
 
 - 🎨 白屏加载动画改为双圆弧反向旋转样式
 - 🎨 美化全局滚动条默认样式，对齐 el-scrollbar 视觉
