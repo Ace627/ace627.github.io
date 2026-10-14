@@ -15,6 +15,9 @@ hero:
     - theme: alt
       text: 📮 接口文档
       link: https://docs.apipost.net/docs/detail/61e0debdacca000?target_id=0
+    - theme: alt
+      text: 🧭 资源导航
+      link: https://ace627.github.io/navhub
 
 features:
   - icon: 🧩

@@ -1,6 +1,7 @@
 dist
 node_modules
 .vitepress/cache
+.playwright-cli
 
 # AI 协作数据，不开源
 .trae

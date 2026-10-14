@@ -3,4 +3,7 @@
   --vp-font-family-base: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
   --vp-sidebar-width: 272px;
   --vp-nav-height: 50px;
+  // 主题切换圆形扩散动效（配合 reset.css 中 keyframes theme-change 使用）
+  --theme-transition-duration: 400ms;
+  --theme-transition-easing: ease-out;
 }

@@ -3,7 +3,7 @@ import type { DefaultTheme } from 'vitepress'
 export const navbar: DefaultTheme.NavItem[] = [
   { text: '🏠 首页', link: '/' },
   { text: '📖 文档', link: '/guide/introduction' },
-  { text: '💬 反馈', link: 'https://gitee.com/decade9527/nestjs-admin-template/issues' },
+  { text: '💬 反馈', link: 'https://github.com/Ace627/nestjs-admin-template/issues' },
   {
     text: '🔗 链接',
     items: [

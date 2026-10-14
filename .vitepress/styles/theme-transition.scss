@@ -1,0 +1,53 @@
+// 主题切换圆形扩散动效，与 Element Plus 官网实现一致：
+// https://github.com/element-plus/element-plus/blob/dev/docs/.vitepress/vitepress/styles/base.scss
+// 关键点：必须将快照混合模式改为 normal，默认的 plus-lighter 会把新旧快照
+// 像素相互叠加，切浅色时表现为瞬间全白
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 2147483646;
+}
+
+// 切深色：旧浅色快照置顶做圆形收缩，露出底层新深色快照
+html[data-theme-transition='to-dark']::view-transition-old(root) {
+  z-index: 2147483646;
+  animation: theme-change var(--theme-transition-duration) var(--theme-transition-easing) both;
+}
+
+html[data-theme-transition='to-dark']::view-transition-new(root) {
+  z-index: 1;
+}
+
+// 切浅色：新浅色快照置顶，复用同一 keyframes 反向播放即圆形扩张，覆盖旧深色快照
+html[data-theme-transition='to-light']::view-transition-old(root) {
+  z-index: 1;
+}
+
+html[data-theme-transition='to-light']::view-transition-new(root) {
+  z-index: 2147483646;
+  // 关键：动画未就绪（DOM 更新到 ready 之间）先隐藏新浅色快照，
+  // 否则它会无裁剪整屏置顶显示，表现为切浅色瞬间全白；
+  // 动画挂载后由 keyframes 的 fill: both 恢复为 1 并从小圆展开
+  opacity: 0;
+  animation: theme-change var(--theme-transition-duration) var(--theme-transition-easing) both;
+  animation-direction: reverse;
+}
+
+@keyframes theme-change {
+  from {
+    clip-path: circle(var(--theme-transition-radius) at var(--theme-transition-x) var(--theme-transition-y));
+    opacity: 1;
+  }
+  to {
+    clip-path: circle(0% at var(--theme-transition-x) var(--theme-transition-y));
+    opacity: 1;
+  }
+}
