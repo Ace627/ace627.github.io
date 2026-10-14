@@ -10,6 +10,7 @@ NestJS Admin Template 是一套基于 **Vue 3 + NestJS 11 全 TypeScript 技术�
 
 | 项目     | 地址                                                                                                                                 |
 | -------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| 源码仓库 | [https://github.com/Ace627/nestjs-admin-template](https://github.com/Ace627/nestjs-admin-template)                                   |
 | 源码仓库 | [https://gitee.com/decade9527/nestjs-admin-template](https://gitee.com/decade9527/nestjs-admin-template)                             |
 | 接口文档 | [https://docs.apipost.net/docs/detail/61e0debdacca000?target_id=0](https://docs.apipost.net/docs/detail/61e0debdacca000?target_id=0) |
 | 默认账号 | `admin` / `123456`                                                                                                                   |

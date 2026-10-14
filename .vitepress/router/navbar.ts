@@ -9,6 +9,7 @@ export const navbar: DefaultTheme.NavItem[] = [
     items: [
       { text: '接口文档', link: 'https://docs.apipost.net/docs/detail/61e0debdacca000?target_id=0' },
       { text: 'Gitee 源码', link: 'https://gitee.com/decade9527/nestjs-admin-template' },
+      { text: 'Github 源码', link: 'https://github.com/Ace627/nestjs-admin-template' },
     ],
   },
 ]

@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitepress'
 import { navbar, sidebar } from './router'
+import vite from '../vite.config'
 
 export default defineConfig({
   // 站点级选项
@@ -35,7 +36,10 @@ export default defineConfig({
       prev: '上一页',
       next: '下一页',
     },
-    socialLinks: [{ icon: 'gitee', link: 'https://gitee.com/decade9527/nestjs-admin-template' }],
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/Ace627/nestjs-admin-template' },
+      { icon: 'gitee', link: 'https://gitee.com/decade9527/nestjs-admin-template' },
+    ],
     search: {
       provider: 'local',
       options: {
@@ -61,28 +65,9 @@ export default defineConfig({
       },
     },
     footer: {
-      // message: 'Released under the MIT License.',
-      // copyright: 'Copyright © 2026-present 当时只道是寻常',
       copyright: 'MIT Licensed | Copyright © 2026-present 当时只道是寻常',
     },
   },
 
-  vite: {
-    // 因为 srcDir = 'docs'，public 目录需要相对于 docs 向上找一级到根目录
-    publicDir: '../public',
-    server: {
-      port: 8080,
-    },
-    build: {
-      rollupOptions: {
-        onwarn(warning, warn) {
-          // 忽略来自 @vueuse/core 的 pure 注释警告
-          if (warning.code === 'PURE_COMMENT_IGNORED' && warning.message.includes('@vueuse/core')) {
-            return
-          }
-          warn(warning)
-        },
-      },
-    },
-  },
+  vite,
 })

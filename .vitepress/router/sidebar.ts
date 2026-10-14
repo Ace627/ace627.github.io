@@ -43,6 +43,7 @@ export const sidebar: DefaultTheme.Sidebar = {
             { text: '登录失败锁定', link: '/guide/login-lock' },
           ],
         },
+        { text: 'AI 技能', link: '/guide/ai-skills' },
         { text: '更新日志', link: '/guide/changelog' },
       ],
     },
@@ -61,6 +62,7 @@ export const sidebar: DefaultTheme.Sidebar = {
           ],
         },
         { text: '常用脚本', link: '/guide/scripts' },
+
         { text: '捐赠支持', link: '/guide/donate' },
       ],
     },
