@@ -3,20 +3,20 @@
 ## 如何新增系统图标
 
 1. 从 [iconfont](https://www.iconfont.cn/) 下载 SVG 图标，重命名为大驼峰格式（如 `User.svg`）
-2. 放入 `admin/src/assets/svg-icons/` 目录
-3. 在 `admin` 目录下执行清理脚本，移除冗余属性并压缩体积：
+2. 放入 `apps/admin/src/assets/svg-icons/` 目录
+3. 在**仓库根目录**执行清理脚本，移除冗余属性并压缩体积：
 
 ```bash
-pnpm clean:svg
+node scripts/clean-svg-icons.mjs
 ```
 
 4. 刷新浏览器即可生效，模板中直接使用 `<SvgIcon name="User" />`
 
-内置「图标管理」页面（`src/views/system/icon`）可预览全部图标并单击复制组件代码。改色、尺寸等详细说明见 [图标使用](./svg-icon)。
+内置「图标管理」页面（`apps/admin/src/views/system/icon`，随系统菜单动态加载）可预览全部图标并单击复制组件代码。改色、尺寸等详细说明见 [图标使用](./svg-icon)。
 
 ## 如何调整左侧菜单宽度
 
-侧边栏宽度由 CSS 变量统一控制，定义在 `admin/src/styles/variables.scss`，修改值即可，布局层引用同一变量，全局自动联动：
+侧边栏宽度由 CSS 变量统一控制，定义在 `apps/admin/src/styles/variables.scss`，修改值即可，布局层引用同一变量，全局自动联动：
 
 ```scss
 html {
@@ -29,7 +29,7 @@ html {
 
 ## 如何更换后端请求地址
 
-**开发环境** `admin/.env.development`
+**开发环境** `apps/admin/.env.development`
 
 ```bash
 # 后端接口地址（Vite 代理的 target），默认本机 3000
@@ -40,7 +40,7 @@ VITE_BASE_URL="http://localhost:3000"
 
 ## 如何设置接口的超时时间
 
-**全局超时时间设置** `admin/.env`
+**全局超时时间设置** `apps/admin/.env`
 
 ```bash
 # 接口超时时间（秒），0 表示无超时，默认为 0

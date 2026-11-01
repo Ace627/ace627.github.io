@@ -1,6 +1,6 @@
 # 全局组件
 
-项目通用组件统一放在 `admin/src/components/`（大驼峰命名，入口文件固定为 `index.vue`），并在 `src/plugins/modules/global-component.ts` 中集中注册，任意页面模板可直接使用，无需手动 `import`。现有组件的清单与详细用法见 [组件文档](./components)。
+项目通用组件统一放在 `apps/admin/src/components/`（大驼峰命名，入口文件固定为 `index.vue`），并在 `src/plugins/modules/global-component.ts` 中集中注册，任意页面模板可直接使用，无需手动 `import`。现有组件的清单与详细用法见 [组件文档](./components)。
 
 ## 使用方法
 

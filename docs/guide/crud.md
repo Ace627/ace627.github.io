@@ -197,12 +197,13 @@ public async findList(queryParams: QueryUserDto) {
 - 密码必须 `encryptPassword` 加密后落库
 - 删除走 `softDelete` 软删除，多对多中间表关系需手动清理
 - 返回字符串提示（「添加成功」等）经全局拦截器包装为统一 `AjaxResult` 结构
+- 上文列表查询是简化示意；实际用户模块还含部门子树过滤（选中部门时连同下级部门一起查询），见 `user.service.ts`
 
 ## 前端实现
 
 ### 1. 定义请求类
 
-与后端端点一一对应（`admin/src/api/system/user.request.ts`）：
+与后端端点一一对应（`apps/admin/src/api/system/user.request.ts`）：
 
 ```typescript
 import { request } from '@/utils/request'
@@ -238,7 +239,7 @@ export class UserRequest {
 
 ### 2. 列表页
 
-`ProSearch`（搜索）+ 操作按钮 + `ProTable`（表格）+ `ProPagination`（分页）四件套（`admin/src/views/system/user/index.vue`）：
+`ProSearch`（搜索）+ 操作按钮 + `ProTable`（表格）+ `ProPagination`（分页）四件套（`apps/admin/src/views/system/user/index.vue`）：
 
 ```vue
 <ProSearch v-permissions="['system:user:query']" :items="items" v-model="queryParams" @query="handleQuery" @reset="resetQuery" />
@@ -253,7 +254,7 @@ export class UserRequest {
   </template>
 </ProTable>
 
-<ProPagination :total v-model:page="queryParams.pageNo" v-model:limit="queryParams.pageSize" @pagination="getList" />
+<ProPagination :total v-model:current-page="queryParams.pageNo" v-model:page-size="queryParams.pageSize" @pagination="getList" />
 ```
 
 ```typescript
@@ -282,8 +283,8 @@ function handleQuery() {
 
 /** 删除：传 row 为单删，不传为批删（多选） */
 async function handleDelete(row?: User.SysUser) {
-  const cancel = await TipModal.confirm(`是否确认删除？`)
-  if (cancel) return
+  const { cancel } = await TipModal.confirm('确定要删除选中的数据吗？')
+  if (cancel) return TipModal.msgWarning('操作取消')
   const ids = row ? row.id : multipleSelection.value.map((i) => i.id).join(',')
   await UserRequest.delete({ ids })
   // 删除当前页最后一条数据后页码回退一位再刷新
@@ -301,7 +302,7 @@ async function handleDelete(row?: User.SysUser) {
 
 ### 3. 编辑弹窗
 
-新增与编辑共用一个弹窗组件，以 `form.id` 区分模式（`admin/src/views/system/user/components/UserDialog.vue`）：
+新增与编辑共用一个弹窗组件，以 `form.id` 区分模式（`apps/admin/src/views/system/user/components/UserDialog.vue`）：
 
 ```typescript
 const visible = ref(false)
@@ -309,19 +310,19 @@ const form = ref<User.UserForm>({})
 const isEdit = computed(() => !!form.value.id)
 const dialogTitle = computed(() => (isEdit.value ? '修改用户' : '新增用户'))
 
-/** 打开弹窗（传 record 为编辑模式，不传为新增模式），父组件通过 ref 调用 */
-async function open(record?: User.SysUser) {
+/** 打开弹窗（传 record 为编辑模式，不传为新增模式；defaultDeptId 为新增时默认所属部门），父组件通过 ref 调用 */
+async function open(record?: User.SysUser, defaultDeptId?: string) {
   visible.value = true
-  await Promise.all([resetForm(record?.id), loadSelectData()])
+  await Promise.all([resetForm(record?.id, defaultDeptId), loadSelectData()])
 }
 
-/** 编辑时回填详情并将关联角色映射为 roleIds；新增时恢复默认值 */
-async function resetForm(userId?: string) {
+/** 编辑时回填详情并将关联角色映射为 roleIds；新增时恢复默认值（初始密码读自系统参数） */
+async function resetForm(userId?: string, defaultDeptId?: string) {
   if (userId) {
     const data = await UserRequest.findDetail({ id: userId })
     form.value = { ...data, roleIds: (data.roles ?? []).map((item) => item.id) }
   } else {
-    form.value = { status: '1', gender: '2' }
+    form.value = { status: '1', gender: '2', password: initPassword.value, deptId: defaultDeptId }
   }
 }
 
@@ -372,16 +373,16 @@ function handleEdit(row: User.SysUser) {
 
 分页参数的解析与换算由两个通用类完成，业务代码无需重复编写：
 
-- `PaginationDto`（`server/src/common/dto/pagination.dto.ts`）：声明 `pageNo / pageSize` 并做数字类型校验，同时预留数据库层面的 `skip / take` 字段
-- `PaginationPipe`（`server/src/common/pipe/pagination.pipe.ts`）：读取请求中的 `pageNo / pageSize`（缺省为第 1 页、每页 10 条），按 `skip = (pageNo - 1) * pageSize`、`take = pageSize` 换算后挂回参数对象
+- `PaginationDto`（`apps/server/src/common/dto/pagination.dto.ts`）：声明 `pageNo / pageSize` 并做数字类型校验，同时预留数据库层面的 `skip / take` 字段
+- `PaginationPipe`（`apps/server/src/common/pipe/pagination.pipe.ts`）：读取请求中的 `pageNo / pageSize`（缺省为第 1 页、每页 10 条），按 `skip = (pageNo - 1) * pageSize`、`take = pageSize` 换算后挂回参数对象
 
 即：请求参数 `pageNo=2, pageSize=10` 会被换算为 `skip=10, take=10` 交给查询构造器。
 
-前端侧由 `ProPagination` 组件承接（`admin/src/components/ProPagination/index.vue`）：
+前端侧由 `ProPagination` 组件承接（`apps/admin/src/components/ProPagination/index.vue`）：
 
 | 特性 | 说明 |
 | --- | --- |
-| 双向绑定 | `v-model:page` 对应 `pageNo`、`v-model:limit` 对应 `pageSize` |
+| 双向绑定 | `v-model:current-page` 对应 `pageNo`、`v-model:page-size` 对应 `pageSize` |
 | 统一事件 | 页码或每页条数变化时只触发 `@pagination`，页面挂同一个 `getList` 即可 |
 | 每页条数选项 | 默认 `[10, 20, 30, 40, 50]`，可通过 `pageSizeList` 覆盖 |
 | 末页收敛 | 切大每页条数导致当前页越界时自动回退到合法页码 |

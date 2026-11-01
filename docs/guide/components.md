@@ -1,6 +1,6 @@
 # 组件文档
 
-以下组件位于 `admin/src/components/`，已在 `src/plugins/modules/global-component.ts` 中全局注册，任意页面可直接使用，无需手动引入。如何新增一个全局组件，见 [全局组件](./global-component)。
+以下组件位于 `apps/admin/src/components/`，已在 `src/plugins/modules/global-component.ts` 中全局注册，任意页面可直接使用，无需手动引入。如何新增一个全局组件，见 [全局组件](./global-component)。
 
 | 组件           | 说明                                     |
 | -------------- | ---------------------------------------- |
@@ -13,7 +13,7 @@
 | `DictTag`      | 字典标签回显                             |
 | `SvgIcon`      | SVG 图标组件                             |
 | `IconSelect`   | 图标选择器                               |
-| `Crontab`      | Cron 表达式生成器弹窗                    |
+| `CrontabDialog`| Cron 表达式生成器弹窗                    |
 
 ## ProTable
 
@@ -66,7 +66,7 @@ const columns: ProTableColumn<UserEntity>[] = [
 
 ```vue
 <template>
-  <ProSearch :items="searchItems" v-model="queryParams" @search="handleQuery" @reset="handleQuery" />
+  <ProSearch :items="searchItems" v-model="queryParams" @query="handleQuery" @reset="handleQuery" />
 </template>
 
 <script setup lang="ts">
@@ -137,7 +137,7 @@ const searchItems: ProSearchItem[] = [
 | 属性       | 类型               | 默认值  | 说明                                   |
 | ---------- | ------------------ | ------- | -------------------------------------- |
 | `content`  | `string`           | `''`    | 提示内容，兼容原生用法                 |
-| `length`   | `number`           | `8`     | 显示最大字数，超出自动省略             |
+| `length`   | `number`           | `0`     | 显示最大字数，超出自动省略；`0` 表示不截断 |
 | `width`    | `string \| number` | `320`   | 提示框最大宽度                         |
 | `ellipsis` | `string`           | `...`   | 省略符号                               |
 
@@ -244,12 +244,12 @@ SVG 图标组件，基于 `vite-plugin-svg-icons` 雪碧图方案，已全局注
 
 事件：`@selected` —— 选中图标后触发，参数为图标名称。
 
-## Crontab
+## CrontabDialog
 
 Cron 表达式生成器弹窗，用于定时任务管理。可视化选择秒 / 分 / 时 / 日 / 月 / 周 / 年七个维度，实时预览最近 5 次执行时间（`cron-parser`）与中文释义（`cronstrue`）。
 
 ```vue
-<Crontab ref="crontabRef" @confirm="handleCronConfirm" />
+<CrontabDialog ref="crontabRef" @confirm="handleCronConfirm" />
 
 <script setup lang="ts">
 const crontabRef = useTemplateRef('crontabRef')

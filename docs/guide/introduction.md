@@ -1,10 +1,10 @@
 # 简介
 
-NestJS Admin Template 是一套基于 **Vue 3 + NestJS 11 全 TypeScript 技术栈**的中后台管理系统模板，权限模型完整落地，容器化开箱可用。
+NestJS Admin Template 是一套基于 **Vue 3 + NestJS 12 全 TypeScript 技术栈**的中后台管理系统模板，权限模型完整落地，容器化开箱可用。
 
-前端 **Vue 3 + TypeScript + Element Plus + Vite 8**，后端 **NestJS 11 + TypeORM + MySQL + Redis + BullMQ**。除登录鉴权外，还完整实现了用户、角色、菜单、部门、字典、日志、缓存、定时任务、在线用户等中后台标配功能。
+前端 **Vue 3 + TypeScript + Element Plus + Vite 8**，后端 **NestJS 12 + TypeORM + MySQL + Redis + BullMQ**。除登录鉴权外，还完整实现了用户、角色、菜单、部门、字典、参数、日志、缓存、定时任务、在线用户等中后台标配功能。
 
-前后端放在**同一个仓库的两个独立工程**中（`admin/` 与 `server/`），**不是 monorepo**——根目录没有 `package.json`，两个工程各自 `pnpm install`，互不干扰，可以单独构建、单独部署。
+前后端放在**同一个仓库的 pnpm workspace monorepo** 中，工程分别位于 `apps/admin/` 与 `apps/server/`，在仓库根目录执行一次 `pnpm install` 即可装好前后端依赖，支持单独构建、单独部署。
 
 ## 资源地址
 
@@ -30,7 +30,8 @@ NestJS Admin Template 是一套基于 **Vue 3 + NestJS 11 全 TypeScript 技术�
 | 角色管理 | 菜单与按钮权限分配、按机构划分数据权限、角色编码管理                           |
 | 菜单管理 | 目录 / 菜单 / 按钮三级粒度，支持外链、内嵌 iframe                              |
 | 字典管理 | 字典类型 + 字典数据两级结构，Redis 缓存主动失效，全局 `useDict()` Hook 封装    |
-| 文件管理 | 目录树管理文件，回收站还原，支持秒传、分片上传、断点续传，按引用计数彻底删除   |
+| 参数设置 | 系统参数键值对维护（如登录锁定阈值、初始密码），业务配置开箱可调               |
+| 文件管理 | 目录树管理文件，回收站还原，支持秒传、分片上传、断点续传、文件/目录移动，按引用计数彻底删除 |
 
 ### 系统监控
 
@@ -43,6 +44,7 @@ NestJS Admin Template 是一套基于 **Vue 3 + NestJS 11 全 TypeScript 技术�
 | 定时任务 | BullMQ 动态调度，支持手动执行 / 暂停 / 恢复，含执行日志               |
 | 操作日志 | 全接口自动记录，IP 归属地解析，支持条件查询与导出                     |
 | 登录日志 | 登录成功 / 失败全量记录，支持条件查询与导出                           |
+| 登录锁定 | 登录失败滑动窗口计数与自动锁定，支持管理员查询与解锁                  |
 
 ### 体验增强
 
@@ -64,7 +66,7 @@ NestJS Admin Template 是一套基于 **Vue 3 + NestJS 11 全 TypeScript 技术�
 | 构建工具  | Vite 8                  | 秒级冷启动，Rolldown 打包             |
 | CSS 方案  | UnoCSS + SCSS           | 原子化 CSS 与语义化样式结合           |
 | 图表库    | ECharts 6               | 服务监控可视化                        |
-| 后端框架  | NestJS 11               | 行业标准的 Node.js 企业级框架         |
+| 后端框架  | NestJS 12               | 行业标准的 Node.js 企业级框架         |
 | ORM       | TypeORM                 | 数据库实体映射，支持 Migration        |
 | 数据库    | MySQL 8                 | 核心业务数据存储                      |
 | 缓存      | Redis 7                 | Token 缓存、接口缓存、BullMQ 队列     |
@@ -77,7 +79,7 @@ NestJS Admin Template 是一套基于 **Vue 3 + NestJS 11 全 TypeScript 技术�
 
 | 环境    | 版本要求            | 说明                     |
 | ------- | ------------------- | ------------------------ |
-| Node.js | ≥ 22.x（推荐 24.x） | 前后端共同依赖的运行时   |
+| Node.js | ≥ 20.x（推荐 24.x） | 前后端共同依赖的运行时   |
 | pnpm    | ≥ 10.x              | 包管理器，前后端各自安装 |
 | MySQL   | ≥ 8.0               | 核心业务数据存储         |
 | Redis   | ≥ 7.0               | 缓存、会话与任务队列     |

@@ -34,6 +34,9 @@ public createUser(@Body() createDto: CreateUserDto) {
 | `FORCE_LOGOUT` | `5` | 强退 |
 | `IMPORT` | `6` | 导入 |
 | `EXPORT` | `7` | 导出 |
+| `UNLOCK` | `8` | 解锁 |
+| `UPLOAD` | `9` | 上传 |
+| `GRANT` | `10` | 授权 |
 
 ## 记录机制
 
@@ -61,16 +64,16 @@ public createUser(@Body() createDto: CreateUserDto) {
 
 ## 扩展操作类型
 
-内置八种操作类型不够用时，三步扩展：
+内置十一种操作类型不够用时，三步扩展（新值从 `11` 起编，避免与内置值冲突）：
 
 1. 在 `BusinessType` 中新增常量：
 
 ```typescript
 /** 测试 */
-static TEST = '8'
+static TEST = '11'
 ```
 
-2. 在字典管理中给 `sys_oper_type` 字典新增一条数据，标签「测试」，值 `8`，日志页的操作类型列由该字典渲染
+2. 在字典管理中给 `sys_oper_type` 字典新增一条数据，标签「测试」，值 `11`，日志页的操作类型列由该字典渲染
 3. Controller 中直接使用：
 
 ```typescript

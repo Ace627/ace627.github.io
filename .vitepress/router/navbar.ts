@@ -5,6 +5,12 @@ export const navbar: DefaultTheme.NavItem[] = [
   { text: '📖 文档', link: '/guide/introduction' },
   { text: '💬 反馈', link: 'https://github.com/Ace627/nestjs-admin-template/issues' },
   {
+    text: '📚 自学教程',
+    items: [
+      { text: '🗺️ 高德地图', link: '/tutorial/amap/01-overview' },
+    ],
+  },
+  {
     text: '🔗 链接',
     items: [
       { text: '接口文档', link: 'https://docs.apipost.net/docs/detail/61e0debdacca000?target_id=0' },

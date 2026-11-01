@@ -73,7 +73,7 @@ public pageNo: number
 校验失败抛出 `BadRequestException`，由全局异常过滤器捕获，配合 `stopAtFirstError` 每次返回一条最优先的提示：
 
 ```json
-{ "code": 400, "message": "参数 username 不能为空", "requestId": "c9dc24ec-...", "data": null }
+{ "code": 400, "message": "参数 username 不能为空", "requestId": "c9dc24ec-...", "data": null, "timestamp": "...", "duration": 12 }
 ```
 
 前端拦截器收到后自动弹出该提示，页面无感知、业务代码零处理。
@@ -104,7 +104,7 @@ phone: string
 deptIds: string[]
 ```
 
-**3. 跨字段或复杂逻辑 → `registerDecorator` 自定义校验装饰器**（`class-validator` 原生能力，适合多处复用的校验，如「结束时间晚于开始时间」）：
+**3. 跨字段或复杂逻辑 → `registerDecorator` 自定义校验装饰器**（`class-validator` 原生能力，适合多处复用的校验，如「结束时间晚于开始时间」。下方 `LaterThan` 为示例代码，模板未内置该装饰器）：
 
 ```typescript
 import { registerDecorator, ValidationOptions, ValidationArguments } from 'class-validator'

@@ -1,6 +1,6 @@
 # AI 技能
 
-模板仓库在 `.codebuddy/skills/` 下内置三个 AI 技能（`code-generator` / `batch-sort` / `apipost-doc-sync`，详见下文）。技能是纯 Markdown 指令集，不绑定特定 AI 工具；使用其它 AI（Cursor、Claude Code 等）时，可直接让 AI 把技能转换为对应工具的适配格式：
+模板仓库在 `.codebuddy/skills/` 下内置五个 AI 技能（`code-generator` / `batch-sort` / `apipost-doc-sync` / `cache-usage` / `excel-import`，详见下文）。技能是纯 Markdown 指令集，不绑定特定 AI 工具；使用其它 AI（Cursor、Claude Code 等）时，可直接让 AI 把技能转换为对应工具的适配格式：
 
 ```text
 请阅读 .codebuddy/skills/xxx/SKILL.md 及其同目录的 references/ 参考文档，将这个技能转换为适配 xxx（你的 AI 工具，如 Cursor、Claude Code、Copilot）的规则格式。
@@ -19,7 +19,7 @@
 
 **注意事项**：
 
-- 仅适用于标准 CRUD 模块；`file`、`job`、`loginlock`、`upload` 等含特殊语义的模块不适用，需手工实现
+- 仅适用于标准 CRUD 模块；`file`、`job`、`loginlock` 等含特殊语义的模块不适用，需手工实现
 - 字段配置表（类型、查询方式、控件、字典绑定、是否必填等）未经逐字段确认前，技能禁止写代码——务必认真核对
 - 写操作端点自动挂 `@RequirePermissions` 权限码与 `@Operlog` 操作日志；init.sql 只追加菜单与按钮权限行，表结构靠 `MYSQL_SYNCHRONIZE=true` 自动同步
 - 生成后运行对账脚本自检（新文件需先 `git add`）：
@@ -43,7 +43,7 @@ node .codebuddy/skills/code-generator/scripts/checklist.mjs
 
 ## apipost-doc-sync
 
-**作用**：把 `server/src/modules/**` 全部控制器端点生成 Apipost 兼容文档 JSON（OpenAPI 3.0 + `x-*` 扩展），支持无基线全量生成或基于 Apipost 导出 JSON 的幂等合并。
+**作用**：把 `apps/server/src/modules/**` 全部控制器端点生成 Apipost 兼容文档 JSON（OpenAPI 3.0 + `x-*` 扩展），支持无基线全量生成或基于 Apipost 导出 JSON 的幂等合并。
 
 **触发条件**：生成/更新接口文档、同步新增端点进文档、核对文档与代码差异。
 
@@ -62,6 +62,18 @@ node .codebuddy/skills/apipost-doc-sync/scripts/sync-openapi.mjs
 # 有基线：幂等合并
 node .codebuddy/skills/apipost-doc-sync/scripts/sync-openapi.mjs <基线json>
 ```
+
+## cache-usage
+
+**作用**：前端本地缓存的使用与封装规范——禁止裸调 `localStorage` / `sessionStorage`，一切持久化经 `StorageCache`（自动前缀、TTL、JSON 序列化）+ 领域 `xxx.cache.ts` 两层封装。
+
+**触发条件**：缓存/持久化数据、新增 `xxx.cache` 封装、token / 登录参数 / 标签页 / 列显隐等本地存储相关任务，或询问缓存封装方式。
+
+## excel-import
+
+**作用**：为任意业务模块添加与用户管理定稿版一致的 Excel 导入功能：下载导入模板（字典列自动下拉）+ 上传 `.xlsx` 导入 + 可选覆盖更新，自动适配模块的实体、权限码与关联字段形态。
+
+**触发条件**：为模块添加导入功能、导入模板、批量导入、`importData` / `importTemplate` 接口、导入弹窗。
 
 ## 自定义技能
 

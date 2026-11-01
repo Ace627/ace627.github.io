@@ -4,7 +4,7 @@ layout: home
 hero:
   name: NestJS Admin Template
   text: 全 TypeScript 中后台管理系统模板
-  tagline: Vue 3 + Element Plus + NestJS 11 + TypeORM · 权限模型完整落地 · 容器化开箱可用
+  tagline: Vue 3 + Element Plus + NestJS 12 + TypeORM · 权限模型完整落地 · 容器化开箱可用
   image:
     src: /images/logo.png
     alt: logo
@@ -22,7 +22,7 @@ hero:
 features:
   - icon: 🧩
     title: 前后端同仓库
-    details: admin/ 与 server/ 两个独立工程放在同一仓库，互不干扰，可以单独构建、单独部署，全栈 TypeScript 类型一致。
+    details: pnpm workspace monorepo，前后端分别位于 apps/admin 与 apps/server，根目录一次安装即可开发，可以单独构建、单独部署，全栈 TypeScript 类型一致。
   - icon: 🔐
     title: 权限模型完整落地
     details: RBAC 用户 / 角色 / 菜单三级权限体系，菜单、按钮、接口三级粒度鉴权，支持按部门划分数据权限。

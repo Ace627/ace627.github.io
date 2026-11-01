@@ -1,6 +1,6 @@
 # 导入导出
 
-导入导出是模板内置的通用 Excel 能力，由 `server/src/modules/common/excel` 下的 `ExcelModule` / `ExcelService` 提供，基于 `exceljs`，流式输出不落盘。字段配置通过 `@Excel` 装饰器声明在实体属性上，导出数据与导入模板共用同一份配置。参考实现：`modules/monitor/log` 下的登录日志与操作日志模块。
+导入导出是模板内置的通用 Excel 能力，由 `apps/server/src/modules/common/excel` 下的 `ExcelModule` / `ExcelService` 提供，基于 `exceljs`，流式输出不落盘。字段配置通过 `@Excel` 装饰器声明在实体属性上，导出数据与导入模板共用同一份配置。参考实现：`modules/monitor/log` 下的登录日志与操作日志模块（导出），以及用户模块的完整导入链路（模板下载 + 导入解析，见下文「导入」）。
 
 ## @Excel 装饰器
 
@@ -25,8 +25,8 @@ export class OperlogEntity {
   @Column({ type: 'varchar', length: 20, comment: '请求时间', name: 'oper_time' })
   operTime: string
 
-  // 仅导出的字段，导入模板中不出现
-  @Excel({ name: '请求标识', width: 40, type: ExcelType.EXPORT })
+  // 列宽自定义示例（未指定 type，导出导入均生效）
+  @Excel({ name: '请求标识', width: 40 })
   @Column({ type: 'varchar', length: 64, comment: '请求唯一标识', default: null })
   requestId: string
 }
@@ -53,7 +53,7 @@ export class OperlogEntity {
 - **文件生成**：`exceljs` 构建 `Workbook`，单个 `Sheet1`，表头行加粗、全表水平垂直居中、冻结首行，未指定 `width` 的列默认宽 `15`
 - **流式输出**：写入 `PassThrough` 流再包 `StreamableFile` 返回，全程不产生临时文件，无需清理
 - **单元格取值**：读取兼容字符串、数字、富文本、超链接文本、公式结果、`Date` 对象等形态，空值统一按 `null` 处理，前后空白自动 trim
-- **字典转换**：导出前批量预取 `dictType` 对应字典数据做「值 → 标签」转换，导入时反向「标签 → 值」反查，找不到对应字典项即按错误处理。该能力由 `ExcelModule` 内部依赖 `DictModule` 提供，业务侧无需关心
+- **字典转换**：导出前批量预取 `dictType` 对应字典数据做「值 → 标签」转换（找不到对应字典项时该单元格渲染为空字符串），导入时反向「标签 → 值」反查，找不到对应字典项即报错。该能力由 `ExcelModule` 内部依赖 `DictModule` 提供，业务侧无需关心
 - **日期处理**：导出按字段 `dateFormat` 格式化；导入不区分各字段的 `dateFormat`，统一逆解析为 `YYYY-MM-DD HH:mm:ss` 存储格式，解析失败按错误处理
 
 ## 导出
@@ -141,7 +141,7 @@ async function handleExport() {
 - 表头强校验：列名、顺序、数量必须与模板完全一致，防止用户篡改模板后列错位
 - 字典反查：字典列按「标签 → 值」解析，找不到对应字典项即报错
 - 日期逆解析：`dateFormat` 列逆解析为 `YYYY-MM-DD HH:mm:ss` 统一存储格式
-- 错误策略**全有或全无**：任一行解析失败即汇总行号与原因整体驳回，不返回部分数据
+- 错误策略**首错即返、全有或全无**：任一行解析失败立即以该行的行号与原因整体驳回（不继续解析后续行），不返回部分数据
 - 跳过表头行与全空行，返回 `ImportRow[]`，`rowNumber` 为 Excel 中的真实行号便于错误定位，`data` 为解析后的行对象
 
 ### 1. 实体标注仅导入字段
@@ -156,11 +156,11 @@ password: string
 
 ### 2. 提供模板下载端点
 
-`excelService.importTemplate(Entity)` 按实体 `@Excel` 配置生成空模板，表头加粗居中、冻结首行、默认列宽 15，用户下载后按列填写即可：
+`excelService.importTemplate(Entity)` 按实体 `@Excel` 配置生成导入模板，表头加粗居中、冻结首行、默认列宽 15，字典列还会自动写入下拉数据校验，用户下载后按列填写即可：
 
 ```typescript
 @SkipTransform()
-@Get('import-template')
+@Post('importTemplate')
 @RequirePermissions(['system:user:import'])
 public importTemplate() {
   return this.userService.importTemplate()
@@ -179,31 +179,29 @@ public async importTemplate() {
 
 ### 3. 提供导入端点
 
-当前模板内置页面未启用导入场景，日志类数据没有天然唯一键。以下为业务模块接入的标准写法：
+模板的用户管理已内置完整导入链路，可直接作为参考实现（`user.controller.ts`）。导入端点除文件外还接收 `ImportUserDto`（`updateSupport` 控制是否覆盖已存在数据，另可指定默认 `deptId` 与 `roleIds`）：
 
 ```typescript
-@Post('import')
+/** 导入用户（file 为 xlsx 文件；updateSupport 控制是否覆盖已存在用户） */
+@Post('importData')
 @RequirePermissions(['system:user:import'])
 @Operlog({ title: '用户管理', businessType: BusinessType.IMPORT })
 @UseInterceptors(FileInterceptor('file'))
-public importUser(@UploadedFile() file: ExpressMulterFile) {
-  return this.userService.importUser(file)
+public importData(@UploadedFile() file: ExpressMulterFile, @Body() importDto: ImportUserDto) {
+  return this.userService.importData(file, importDto)
 }
 ```
 
 ### 4. Service 解析与入库
 
-`import()` 返回的行数据未做业务校验，跳过还是覆盖已存在数据由业务层决定。以下示例按 `username` 去重并跳过已存在数据：
+`import()` 返回的行数据未做业务校验，跳过还是覆盖已存在数据由业务层决定。参考 `user.service.ts` 的 `importData`：按 `username` 查出已存在数据，`updateSupport` 为真时覆盖更新（仅更新资料字段，不改动密码/部门/角色，管理员账号禁止被导入修改），否则跳过，最后返回「导入成功：新增 X 条、更新 Y 条」：
 
 ```typescript
-public async importUser(file: ExpressMulterFile) {
+public async importData(file: ExpressMulterFile, importDto: ImportUserDto) {
   const rows = await this.excelService.import(UserEntity, file) // 只解析不校验不入库
-  // 按唯一键查出已存在数据，也可改为对已存在数据执行 update
-  const existed = await this.userRepository.findBy({ username: In(rows.map(({ data }) => data.username)) })
-  const existedUsernames = new Set(existed.map((item) => item.username))
-  const toCreate = rows.filter(({ data }) => !existedUsernames.has(data.username))
-  if (toCreate.length) await this.userRepository.insert(toCreate.map(({ data }) => data))
-  return `成功导入 ${toCreate.length} 条，跳过已存在 ${rows.length - toCreate.length} 条`
+  // 按 username 分流：已存在的按 updateSupport 决定覆盖或跳过，其余新增
+  // ...（略，完整实现见 user.service.ts）
+  return `导入成功：新增 ${createdCount} 条、更新 ${updatedCount} 条`
 }
 ```
 
@@ -219,8 +217,8 @@ public async importUser(file: ExpressMulterFile) {
 
 ```typescript
 // api/system/user.request.ts —— 不要手动设置 Content-Type，浏览器自动带 boundary
-public static import(data: FormData) {
-  return request.post('/system/user/import', data)
+public static importData(data: FormData): Promise<string> {
+  return request.post('/system/user/importData', data)
 }
 ```
 
@@ -229,8 +227,9 @@ async function handleImport() {
   if (!uploadFile.value) return TipModal.msgWarning('请先选择文件')
   const formData = new FormData()
   formData.append('file', uploadFile.value)
-  const response = await UserRequest.import(formData)
-  TipModal.msgSuccess(response.message)
+  // 还可按需追加 updateSupport / deptId / roleIds
+  const message = await UserRequest.importData(formData)
+  TipModal.msgSuccess(message)
 }
 ```
 
@@ -239,7 +238,7 @@ async function handleImport() {
 导入链路的失败反馈全部走统一响应结构，前端无需特殊处理：
 
 - **模板不一致**：直接驳回，提示「导入文件与模板不一致，请下载最新模板后填写」
-- **行级解析失败**：字典标签不存在、日期格式错误等按行汇总，错误信息带 Excel 真实行号定位，如「第 3 行：操作类型「8」不存在」，最多展示前 10 条并附错误总数
+- **行级解析失败**：字典标签不存在、日期格式错误等按「首错即返」策略驳回，错误信息带 Excel 真实行号定位，如「第 3 行：操作类型「8」不存在」
 - **全部驳回不部分成功**：存在任何解析错误时不会入库任何一行，用户修正后重新上传即可，无需担心脏数据残留
 
 ## 设计取舍

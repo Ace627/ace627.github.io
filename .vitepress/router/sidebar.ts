@@ -3,6 +3,27 @@ import type { DefaultTheme } from 'vitepress'
 // https://vitepress.dev/zh/reference/default-theme-sidebar
 // 对象写法是多侧边栏模式 https://vitepress.dev/zh/reference/default-theme-sidebar#multiple-sidebars
 export const sidebar: DefaultTheme.Sidebar = {
+  '/tutorial/': [
+    {
+      text: '自学教程',
+      items: [
+        {
+          text: '高德地图系列',
+          link: '/tutorial/amap/01-overview',
+          collapsed: true,
+          items: [
+            { text: '高德地图入门', link: '/tutorial/amap/01-overview' },
+            { text: '地图基础', link: '/tutorial/amap/02-basics' },
+            { text: '标记与覆盖物', link: '/tutorial/amap/03-markers' },
+            { text: '搜索与地理编码', link: '/tutorial/amap/04-search-geocode' },
+            { text: '定位与轨迹', link: '/tutorial/amap/05-location-track' },
+            { text: 'Vue 工程化', link: '/tutorial/amap/06-engineering' },
+            { text: '性能与进阶', link: '/tutorial/amap/07-performance' },
+          ],
+        },
+      ],
+    },
+  ],
   '/guide/': [
     {
       text: '文档',

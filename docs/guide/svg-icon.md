@@ -35,18 +35,18 @@
 ## 新增图标
 
 1. 从 [iconfont](https://www.iconfont.cn/) 选择并下载 SVG 图标
-2. 重命名为大驼峰格式（如 `User.svg`），放入 `src/assets/svg-icons`
-3. 在 `admin` 目录下执行清理脚本，移除 `fill` / `width` / `height` 等冗余属性并压缩体积：
+2. 重命名为大驼峰格式（如 `User.svg`），放入 `apps/admin/src/assets/svg-icons`
+3. 在**仓库根目录**执行清理脚本，移除 `fill` / `width` / `height` 等冗余属性并压缩体积（不传目录参数时默认清理 `apps/admin/src/assets/svg-icons`）：
 
 ```bash
-pnpm clean:svg
+node scripts/clean-svg-icons.mjs
 ```
 
 4. 刷新浏览器即可生效（雪碧图按目录自动生成，无需手动注册，图标空白时刷新一次即可）
 
 ## 图标管理
 
-系统内置了「图标管理」页面（`src/views/system/icon/index.vue`，静态路由），自动读取 `src/assets/svg-icons` 下的全部图标，以网格形式预览图标与名称：
+系统内置了「图标管理」页面（`apps/admin/src/views/system/icon/index.vue`，由系统菜单动态加载），自动读取 `apps/admin/src/assets/svg-icons` 下的全部图标，以网格形式预览图标与名称：
 
 - **搜索**：顶部输入图标名称，实时筛选
 - **单击复制**：点击图标，复制 `<SvgIcon name='Xxx' />` 组件代码，粘贴即用

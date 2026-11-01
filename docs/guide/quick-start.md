@@ -8,7 +8,7 @@
 
 | 工具    | 最低版本 | 作用                      | 安装指引                                |
 | ------- | -------- | ------------------------- | --------------------------------------- |
-| Node.js | ≥ 22.x   | JavaScript 运行时         | [nodejs.org](https://nodejs.org)        |
+| Node.js | ≥ 20.x   | JavaScript 运行时         | [nodejs.org](https://nodejs.org)        |
 | pnpm    | ≥ 10.x   | 包管理器（比 npm 快得多） | [pnpm.io](https://pnpm.io/installation) |
 | MySQL   | ≥ 8.0    | 业务数据库（本地开发需要）| [mysql.com](https://dev.mysql.com/downloads/) |
 | Redis   | ≥ 7.0    | 缓存与会话（本地开发需要）| [redis.io](https://redis.io/downloads/) |
@@ -17,7 +17,7 @@
 在终端里依次执行以下命令，看到版本号就说明装好了：
 
 ```bash
-node -v     # 应显示 v22.x.x 或更高
+node -v     # 应显示 v20.x.x 或更高
 pnpm -v     # 应显示 10.x.x 或更高
 ```
 
@@ -75,7 +75,7 @@ docker compose up -d --build
 | Redis       | 容器网内 6379               | 默认不映射宿主机端口           |
 
 :::: info 前端怎么部署？
-`docker-compose.yml` 只编排了后端与中间件。前端 `admin/` 需要 `pnpm build` 后将 `dist` 目录交给 Nginx 托管，并把 `/api` 反向代理到后端 `3000` 端口，详见下文「生产部署」。
+`docker-compose.yml` 只编排了后端与中间件。前端 `apps/admin/` 需要 `pnpm build` 后将 `dist` 目录交给 Nginx 托管，并把 `/api` 反向代理到后端 `3000` 端口，详见下文「生产部署」。
 ::::
 
 ### 遇到问题怎么办？
@@ -102,14 +102,18 @@ docker compose down -v
 
 **1. 安装依赖**
 
+本模板是 pnpm workspace monorepo，在**仓库根目录**执行一次安装即可同时装好前后端依赖：
+
 ```bash
-cd server
 pnpm install
 ```
 
 **2. 创建环境变量文件**
 
+进入后端工程目录，复制环境变量模板：
+
 ```bash
+cd apps/server
 cp .env.example .env       # macOS / Linux
 copy .env.example .env     # Windows PowerShell
 ```
@@ -154,18 +158,17 @@ pnpm start:dev
 
 ### 初始化前端
 
-在项目根目录打开另一个终端窗口：
+依赖已在根目录统一安装，进入前端工程目录直接启动即可：
 
 ```bash
-cd admin
-pnpm install
+cd apps/admin
 pnpm dev
 ```
 
 前端默认端口 `5173`，访问地址：`http://localhost:5173`。
 
 :::: info 前端怎么请求后端？
-`admin/.env.development` 中预置了 `VITE_BASE_URL=http://localhost:3000` 和 `VITE_BASE_API=/dev-api/api`，Vite 会自动把 `/dev-api/api` 开头的请求代理转发到后端。你不需要改任何代码，也不用担心跨域问题。
+`apps/admin/.env.development` 中预置了 `VITE_BASE_URL=http://localhost:3000` 和 `VITE_BASE_API=/dev-api/api`，Vite 会自动把 `/dev-api/api` 开头的请求代理转发到后端。你不需要改任何代码，也不用担心跨域问题。
 ::::
 
 ### 登录系统
@@ -189,7 +192,7 @@ pnpm dev
 方式二：手动部署。
 
 ```bash
-cd server
+cd apps/server
 pnpm build       # 产物在 dist/
 pnpm start:prod  # 或使用 pm2 等进程管理器守护
 ```
@@ -197,7 +200,7 @@ pnpm start:prod  # 或使用 pm2 等进程管理器守护
 ### 前端
 
 ```bash
-cd admin
+cd apps/admin
 pnpm build       # 先 vue-tsc 类型检查，再打包到 dist/
 ```
 
@@ -222,12 +225,12 @@ server {
 ```
 
 :::: info
-生产构建时 `admin/.env.production` 的 `VITE_BASE_API=/api` 会生效，前端直接请求同域 `/api`，由 Nginx 转发到后端，天然避免跨域。
+生产构建时 `apps/admin/.env.production` 的 `VITE_BASE_API=/api` 会生效，前端直接请求同域 `/api`，由 Nginx 转发到后端，天然避免跨域。
 ::::
 
 ## 环境变量速查
 
-### 后端（server/.env）
+### 后端（apps/server/.env）
 
 | 变量                 | 默认值        | 说明                             |
 | -------------------- | ------------- | -------------------------------- |
@@ -246,8 +249,9 @@ server {
 | `MYSQL_SYNCHRONIZE`  | `false`       | TypeORM 自动同步表结构，生产必须 `false` |
 | `JWT_SECRET`         | —             | JWT 签名密钥                     |
 | `JWT_EXPIRES_IN`     | `1800`        | 访问令牌有效期（秒）             |
+| `JWT_REFRESH_EXPIRES_IN` | `604800`  | 刷新令牌有效期（秒），604800 = 7 天 |
 
-### 前端（admin/.env）
+### 前端（apps/admin/.env）
 
 | 变量                     | 默认值    | 说明                                       |
 | ------------------------ | --------- | ------------------------------------------ |

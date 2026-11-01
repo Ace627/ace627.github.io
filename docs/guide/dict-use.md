@@ -21,7 +21,7 @@
 
 ```vue
 <script setup lang="ts">
-const { sys_normal_disable, sys_user_gender } = useDict('sys_normal_disable', 'sys_user_gender')
+const { sys_normal_disable, sys_user_sex } = useDict('sys_normal_disable', 'sys_user_sex')
 </script>
 ```
 

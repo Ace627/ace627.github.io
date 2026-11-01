@@ -10,7 +10,7 @@ Service 抛出异常 → 全局异常过滤器捕获并翻译 → 前端拦截�
 
 ## 业务异常
 
-业务异常类（`server/src/common/exception/business.exception.ts`）继承 NestJS 内置 `HttpException`，支持自定义错误码与提示消息：
+业务异常类（`apps/server/src/common/exception/business.exception.ts`）继承 NestJS 内置 `HttpException`，支持自定义错误码与提示消息：
 
 ```typescript
 import { BusinessException } from '@/common'
@@ -35,7 +35,7 @@ throw new BusinessException('参数错误', 400)
 
 ## 全局异常过滤器
 
-过滤器（`server/src/common/filter/all-exception.filter.ts`）在 `app.module.ts` 中以 `APP_FILTER` 全局注册，捕获所有未被业务代码处理的异常：
+过滤器（`apps/server/src/common/filter/all-exception.filter.ts`）在 `app.module.ts` 中以 `APP_FILTER` 全局注册，捕获所有未被业务代码处理的异常：
 
 ```typescript
 { provide: APP_FILTER, useClass: AllExceptionsFilter },
@@ -69,10 +69,10 @@ throw new BusinessException('参数错误', 400)
 
 ## 前端统一承接
 
-前端响应拦截器（`admin/src/utils/request/`）与后端约定同构，业务代码同样无需重复处理错误：
+前端响应拦截器（`apps/admin/src/utils/request/`）与后端约定同构，业务代码同样无需重复处理错误：
 
 - `code !== 200` 时 reject 并触发统一错误提示，提示文案**优先展示后端返回的 `message`**（如「该用户已存在」），无则按 HTTP 状态映射兜底文案（如 401「登录已过期」、500「服务器内部错误」）
-- `401` 特殊处理：提示登录过期 → 清除本地令牌 → 刷新页面，并发场景下多个 401 只弹一次提示
+- `401` 特殊处理：**先尝试无感刷新令牌**——用 `refreshToken` 换取新令牌并自动重放原请求，并发场景下多个 401 共享同一次刷新、只刷一次；刷新不可用（无 refreshToken / 刷新失败 / 重放仍 401）时才清场兜底：提示 → 清除本地令牌对 → 刷新页面
 - 提示组件为全局 `TipModal.msgError`，业务代码中的 `catch` 仅用于恢复 loading 等流程控制，不再负责弹错
 
 ## 使用总结

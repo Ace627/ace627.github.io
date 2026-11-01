@@ -1,11 +1,12 @@
 # 本地缓存
 
-`StorageCache` 是基于 `localStorage` 的封装类，定义在 `src/utils/storage-cache.ts` 文件中，提供带过期时间、带键前缀的键值存取能力，有如下方法：
+`StorageCache` 是基于 `localStorage` 的封装类，定义在 `src/utils/cache/storage-cache.ts` 文件中（经 `@/utils` 统一导出），提供带过期时间、带键前缀的键值存取能力，有如下方法：
 
 | 方法              | 说明                                             |
 | ----------------- | ------------------------------------------------ |
 | `set(key, value, ttl?)` | 写入存储，`ttl` 单位秒，默认 `-1` 表示永不过期 |
-| `get(key, defaultValue?)` | 读取存储，不存在或已过期时返回默认值          |
+| `get(key)`        | 读取存储，不存在或已过期时返回 `undefined`       |
+| `getWithDefault(key, defaultValue)` | 读取存储，不存在或已过期时返回默认值 |
 | `remove(key)`     | 删除指定键                                       |
 | `clear()`         | 清空本工具写入的所有存储，不影响其它 localStorage 数据 |
 
@@ -24,7 +25,7 @@ StorageCache.set('searchHistory', '关键字', 30)
 
 // 读取（带类型推断与默认值）
 const user = StorageCache.get('userInfo')
-const tip = StorageCache.get('notExistKey', '默认值')
+const tip = StorageCache.getWithDefault('notExistKey', '默认值')
 
 // 删除与清空
 StorageCache.remove('userInfo')
@@ -37,10 +38,10 @@ StorageCache.clear()
 
 ## 键前缀隔离
 
-所有键会自动拼接 `admin/.env` 中配置的统一前缀 `VITE_STORAGE_PREFIX`（默认 `app:storage:`）：
+所有键会自动拼接 `apps/admin/.env` 中配置的统一前缀 `VITE_STORAGE_PREFIX`（默认 `app:storage:`）：
 
 ```dotenv
-# admin/.env
+# apps/admin/.env
 # 本地缓存统一键前缀
 VITE_STORAGE_PREFIX="app:storage:"
 ```
@@ -60,6 +61,7 @@ VITE_STORAGE_PREFIX="app:storage:"
 | `system-setting.cache.ts`| 布局与主题设置                             |
 | `sidebar-status.cache.ts`| 侧边栏展开状态                             |
 | `tags-view.cache.ts`     | 多标签页持久化                             |
+| `column-hidden.cache.ts` | 列表列显隐记忆（配合 `RightToolbar` 的 `storageKey`） |
 
 以 `token.cache.ts` 为例：
 

@@ -1,6 +1,6 @@
 # 动态标题
 
-浏览器标签页标题随路由自动切换：进入带标题的页面显示「页面标题 - 应用标题」，其余场景显示应用标题。由 `useDynamicTitle` Hook 在根组件统一驱动，应用标题取自 `admin/.env` 的 `VITE_APP_TITLE`（默认 `NestJS Admin Template`）。
+浏览器标签页标题随路由自动切换：进入带标题的页面显示「页面标题 - 应用标题」，其余场景显示应用标题。由 `useDynamicTitle` Hook 在根组件统一驱动，应用标题取自 `apps/admin/.env` 的 `VITE_APP_TITLE`（默认 `NestJS Admin Template`）。
 
 ## 工作原理
 
@@ -48,7 +48,7 @@ export function useDynamicTitle() {
 `meta.title` 就是页面在菜单中显示的名称：
 
 - **动态路由**：登录后由后端菜单表下发，改菜单名称即改标题
-- **静态路由**：在 `src/router/modules/static.route.ts` 手写（如首页、个人中心、字典数据、调度日志）
+- **静态路由**：在 `src/router/modules/static.route.ts` 手写（如首页、个人中心、调度日志）
 
 ## 开关配置
 
