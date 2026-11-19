@@ -21,17 +21,17 @@ hero:
 
 features:
   - icon: 🧩
-    title: 前后端同仓库
-    details: pnpm workspace monorepo，前后端分别位于 apps/admin 与 apps/server，根目录一次安装即可开发，可以单独构建、单独部署，全栈 TypeScript 类型一致。
+    title: 单仓双工程
+    details: 前端 apps/admin 与后端 apps/server 各自独立安装、各自锁文件，互不引用，可单独构建、单独部署、单独拷走，全栈 TypeScript 类型一致。
   - icon: 🔐
     title: 权限模型完整落地
     details: RBAC 用户 / 角色 / 菜单三级权限体系，菜单、按钮、接口三级粒度鉴权，支持按部门划分数据权限。
   - icon: 📦
     title: 中后台标配功能
-    details: 字典管理、文件管理（分片 / 秒传 / 断点续传）、服务与缓存监控、在线用户、定时任务、操作与登录日志。
+    details: 字典管理、文件管理（分片 / 秒传 / 断点续传）、服务与缓存监控、在线用户、定时任务、操作与登录日志、表格打印。
   - icon: 🚀
     title: 容器化开箱可用
-    details: Docker Compose 一条命令拉起 NestJS + MySQL + Redis，多阶段构建、健康探针、非 root 运行全配好。
+    details: 脚本一键构建后端镜像并导出离线 tar，多阶段构建、健康探针、非 root 运行、日志与上传卷全配好，导入即运行。
   - icon: 📊
     title: 生产级监控
     details: 实时 CPU / 内存 / 磁盘监控，Redis 缓存可视化管理，数据库连接池监视，操作日志全接口自动记录。

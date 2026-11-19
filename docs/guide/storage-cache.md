@@ -15,7 +15,7 @@
 支持任意可 JSON 序列化的值（对象、数组、字符串、数字等），无需手动处理序列化：
 
 ```ts
-import { StorageCache } from '@/utils/storage-cache'
+import { StorageCache } from '@/utils'
 
 // 存对象，永不过期
 StorageCache.set('userInfo', { name: 'admin', roles: ['admin'] })

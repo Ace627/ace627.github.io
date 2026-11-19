@@ -30,6 +30,7 @@ export const sidebar: DefaultTheme.Sidebar = {
       items: [
         { text: '简介', link: '/guide/introduction' },
         { text: '环境部署', link: '/guide/quick-start' },
+        { text: '生产部署', link: '/guide/deployment' },
         { text: '项目介绍', link: '/guide/project' },
         {
           text: '前端手册',
@@ -79,6 +80,8 @@ export const sidebar: DefaultTheme.Sidebar = {
             { text: '如何新增系统图标', link: '/guide/faq#如何新增系统图标' },
             { text: '如何调整左侧菜单宽度', link: '/guide/faq#如何调整左侧菜单宽度' },
             { text: '如何更换后端请求地址', link: '/guide/faq#如何更换后端请求地址' },
+            { text: '如何修改前端开发端口', link: '/guide/faq#如何修改前端开发端口' },
+            { text: '如何修改数据库表结构', link: '/guide/faq#如何修改数据库表结构' },
             { text: '如何设置接口的超时时间', link: '/guide/faq#如何设置接口的超时时间' },
           ],
         },

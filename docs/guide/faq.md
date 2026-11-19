@@ -38,6 +38,32 @@ VITE_BASE_URL="http://localhost:3000"
 
 修改后重启 dev server 生效。代理配置在 `vite.config.ts` 中：请求前缀 `/dev-api/api` 会被转发到 `VITE_BASE_URL` 并去掉 `/dev-api` 前缀，一般无需改动。
 
+## 如何修改前端开发端口
+
+**开发服务器端口** `apps/admin/.env.development`
+
+```bash
+# 开发服务器监听端口，默认 7878
+VITE_SERVER_PORT="7878"
+```
+
+修改后重启 dev server 生效；端口只影响本地访问地址，与接口代理（`VITE_BASE_URL`）互不影响。
+
+## 如何修改数据库表结构
+
+表结构由 TypeORM 迁移管理，`MYSQL_SYNCHRONIZE` 保持 `false`，不要直接改库。在 `apps/server` 目录下：
+
+```bash
+# 1. 改实体：src/**/*.entity.ts
+# 2. 对比实体与当前库，生成增量迁移
+pnpm typeorm migration:generate src/database/migrations/<改动名>
+# 3. 检查生成的 up() / down()，把迁移文件提交进仓库
+# 4. 执行迁移
+pnpm migration:run
+```
+
+`init-db.mjs` / `pnpm db:init` 只用于空库首装，已上线的库请走上面的增量迁移，详见 [生产部署](./deployment#表结构变更)。
+
 ## 如何设置接口的超时时间
 
 **全局超时时间设置** `apps/admin/.env`

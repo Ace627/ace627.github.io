@@ -1,6 +1,6 @@
 # 图标使用
 
-项目基于 `vite-plugin-svg-icons` 实现 SVG 雪碧图方案：所有图标统一放在 `src/assets/svg-icons/` 目录，构建时自动合成雪碧图，`<SvgIcon>` 组件已全局注册，可在任意地方直接使用。
+项目用自研的 Vite 插件实现 SVG 雪碧图方案（`build/plugins/svg-icons-plugin.ts`）：所有图标统一放在 `src/assets/svg-icons/` 目录，构建时扫描目录、合成雪碧图并注入页面，`<SvgIcon>` 组件已全局注册，可在任意地方直接使用。没有额外安装 `vite-plugin-svg-icons` 依赖，需要改注入逻辑时直接改这个插件即可。
 
 ## 使用方式
 

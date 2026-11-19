@@ -4,17 +4,23 @@ pageClass: page-changelog
 
 # 更新日志
 
-## 2026-xx-xx v1.2.0
+## 2026-11-19 v1.2.0
 
 > Git Commit:
 
 - ✨ 新增用户管理 Excel 批量导入功能，支持下载模板、按账号覆盖更新
-- ✨ 新增 cache-usage 缓存技能，规范 AI 编码时的本地缓存使用与封装
-- ✨ 新增 excel-import 导入技能，规范 AI 为业务模块接入 Excel 导入的实现口径
-- ♻️ 移动端切回桌面端时侧边栏默认恢复展开状态
+- ✨ RightToolbar 新增表格打印功能，支持打印当前页或勾选数据，可配置纸张方向、密度、字号与字段，页面无须额外代码
+- ✨ 数据库初始化改为「基线迁移 + 种子数据」流程，表结构统一由迁移管理
+- ✨ 新增首屏加载效果示例页，内置六种加载动画并注册菜单
+- ✨ 新增接口请求与 Vue 开发规范两个 AI 技能（`.agents/skills/`）
+- ✨ 新增 build-server-image 脚本，一键构建 server 镜像并导出 dist 离线 tar 包
+- 🔒 用户管理写操作接入数据权限校验，防止越权修改与删除
 - ♻️ 图表字体改为读取全局字体变量，跟随主题统一配置
 - ♻️ NestJS 升级到 v12 并切换 ESM 模式且保留别名导入
-- ♻️ 项目重构为 pnpm monorepo，前后端拆分为 apps/admin 与 apps/server 统一管理
+- ♻️ 前后端拆分为 apps/admin 与 apps/server 两个独立 pnpm 工程，各自持有依赖清单与锁文件
+- ♻️ 构建分包改用 Rolldown codeSplitting 分组策略，降低主包体积
+- ♻️ init-db 脚本迁移为 ESM（init-db.js → init-db.mjs），与其他 Node 脚本格式保持一致
+- 🐛 修复浅色主题变量写在 html 下被 Element Plus 默认值覆盖的问题
 - 🧹 其他细节优化
 
 ## 2026-10-14 v1.1.0

@@ -1,6 +1,6 @@
 # 组件文档
 
-以下组件位于 `apps/admin/src/components/`，已在 `src/plugins/modules/global-component.ts` 中全局注册，任意页面可直接使用，无需手动引入。如何新增一个全局组件，见 [全局组件](./global-component)。
+以下组件位于 `apps/admin/src/components/`，已在 `src/plugins/modules/global-component.ts` 中全局注册，任意页面可直接使用，无需手动引入。其中 `ProChart` / `CrontabDialog` / `IconSelect` 采用异步注册，渲染到时才加载对应 chunk，不进首屏主包。如何新增一个全局组件，见 [全局组件](./global-component)。
 
 | 组件           | 说明                                     |
 | -------------- | ---------------------------------------- |
@@ -9,7 +9,7 @@
 | `ProPagination`| 分页组件，兼容 el-pagination 全部属性    |
 | `ProTooltip`   | 增强提示组件，文字超长自动省略           |
 | `ProChart`     | ECharts 图表封装，自适应容器尺寸         |
-| `RightToolbar` | 列表页右侧工具栏：搜索显隐、刷新、列显隐 |
+| `RightToolbar` | 列表页右侧工具栏：搜索显隐、刷新、列显隐、表格打印 |
 | `DictTag`      | 字典标签回显                             |
 | `SvgIcon`      | SVG 图标组件                             |
 | `IconSelect`   | 图标选择器                               |
@@ -56,9 +56,13 @@ const columns: ProTableColumn<UserEntity>[] = [
 | `columns`| `ProTableColumn[]` | 渲染列配置，兼容 el-table-column 全部属性 |
 | `loading`| `boolean`          | 表格数据加载状态                       |
 | `hiddenColumnKeys` | `string[]` | 隐藏列 key 数组，渲染前过滤，一般由 `RightToolbar` 的 v-model 接管 |
+| `elementLoadingText` | `string` | 加载提示文案，默认「正在加载数据，请稍候...」 |
+| `elementLoadingBackground` | `string` | 加载遮罩背景，默认 `rgba(0, 0, 0, 0.72)` |
 
 - `ProTableColumn` 的 `prop` 有泛型约束，严格对应行数据属性名，杜绝手写错误
 - `slot` 指定自定义渲染列的插槽名
+- `printFormatter` 为打印格式化函数（`(row) => string`），插槽列建议配置，否则打印时输出 slot 名对应的原始字段值
+- 组件挂载时会自动向同页 `RightToolbar` 注册打印上下文，打印按钮与配置弹窗因此无需页面写任何代码
 
 ## ProSearch
 
@@ -168,7 +172,7 @@ const chartOptions: EChartsOption = {
 
 ## RightToolbar
 
-列表页右侧工具栏，与 `ProTable` / `ProSearch` 配套使用，提供三项能力：显隐搜索区域、刷新列表、配置列显隐（下拉勾选）。列显隐状态可通过 `storageKey` 持久化到 localStorage，下次进入页面自动恢复。
+列表页右侧工具栏，与 `ProTable` / `ProSearch` 配套使用，提供四项能力：显隐搜索区域、刷新列表、配置列显隐（下拉勾选）、打印表格。列显隐状态可通过 `storageKey` 持久化到 localStorage，下次进入页面自动恢复。
 
 ```vue
 <template>
@@ -198,6 +202,7 @@ const hiddenColumnKeys = ref<string[]>([])
 
 | 属性               | 类型               | 默认值 | 说明                                                       |
 | ------------------ | ------------------ | ------ | ---------------------------------------------------------- |
+| `printable`        | `boolean`          | `true` | 是否显示「打印数据」按钮；同页没有 `ProTable` 注册打印上下文时按钮自动隐藏 |
 | `search`           | `boolean`          | `true` | 是否显示「隐藏/显示搜索」按钮                              |
 | `showSearch`       | `boolean`          | `true` | 搜索区域显隐状态（`v-model:showSearch`）                   |
 | `columns`          | `ProTableColumn[]` | `[]`   | 列配置（只读，用于渲染勾选列表）；为空则不显示「列设置」按钮 |
@@ -208,6 +213,22 @@ const hiddenColumnKeys = ref<string[]>([])
 
 - 列 key 的生成规则与 `ProTable` 内部一致：`type` > `prop` > `slot` > `column-${index}`，直接把 `columns` 传进来即可，无需关心 key 细节
 - `selection` / `index` 系统列与操作列（固定右侧的插槽列）会自动排除，不出现在勾选列表中
+
+### 表格打印
+
+打印按钮不传任何参数即可用：`ProTable` 挂载时会把列配置、数据源、勾选行注册成打印上下文，`RightToolbar` 沿组件树找到同页的 `ProTable` 后显示按钮，点击弹出打印配置弹窗（`PrintConfigDialog`）：
+
+| 配置项 | 说明 |
+| --- | --- |
+| 打印标题 | 默认取当前路由标题 |
+| 选择数据 | 当前页数据 / 勾选数据 |
+| 打印方向 | 纵向 / 横向（A4，边距 12mm） |
+| 打印密度 | 紧凑 / 标准 / 宽松，对应不同单元格内边距 |
+| 打印字号 | 纸宽不足时自动压缩，保证不溢出 |
+| 字段与列宽 | 勾选参与打印的列，可单独调整列宽 |
+| 其他 | 增加序号列、打印统计信息、打印斑马纹开关 |
+
+实现上走离屏 `iframe`：拼装完整 HTML 后调用 `print()`，`afterprint` 或超时后移除 iframe，不污染当前页面；树形表格会先把层级平铺成普通行再打印。需要在打印时自定义列文本，给对应列配置 `printFormatter` 即可。
 
 ## DictTag
 
@@ -220,7 +241,7 @@ const hiddenColumnKeys = ref<string[]>([])
 
 ## SvgIcon
 
-SVG 图标组件，基于 `vite-plugin-svg-icons` 雪碧图方案，已全局注册。
+SVG 图标组件，图标由 `build/plugins/svg-icons-plugin.ts` 在构建时合成雪碧图（`virtual:svg-icons-register` 虚拟模块），已全局注册。
 
 ```vue
 <!-- name：图标名称，对应 `@/assets/svg-icons` 目录下的文件名，必填 -->

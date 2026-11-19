@@ -134,6 +134,10 @@ export class UserController {
 - 删除接口用 `ParseArrayPipe` 把 `?ids=1,2,3` 逗号串直接转成数组，天然支持单删与批删
 - 列表接口的 `PaginationPipe` 自动把 `pageNo / pageSize` 换算为 `skip / take`，详见下文[分页实现](#分页实现)
 
+:::: tip 按部门隔离数据时
+上面是简化示意。需要数据权限的模块（如用户管理）会在列表、修改、删除上标注 `@DataScope`，并在 Service 落库前校验目标数据是否在授权范围内，写法见 [数据权限](./data-scope#写操作同样受数据权限保护)。
+::::
+
 ### 3. 实现 Service
 
 ```typescript

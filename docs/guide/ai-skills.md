@@ -1,80 +1,53 @@
 # AI 技能
 
-模板仓库在 `.codebuddy/skills/` 下内置五个 AI 技能（`code-generator` / `batch-sort` / `apipost-doc-sync` / `cache-usage` / `excel-import`，详见下文）。技能是纯 Markdown 指令集，不绑定特定 AI 工具；使用其它 AI（Cursor、Claude Code 等）时，可直接让 AI 把技能转换为对应工具的适配格式：
+模板仓库在 `.agents/skills/` 下内置两个 AI 技能：`request-best-practices`（接口请求规范）与 `vue-best-practices`（Vue 3 开发规范）。技能是纯 Markdown 指令集，不绑定特定 AI 工具；使用其它 AI（Cursor、Claude Code、Copilot 等）时，可直接让 AI 把技能转换为对应工具的适配格式：
 
 ```text
-请阅读 .codebuddy/skills/xxx/SKILL.md 及其同目录的 references/ 参考文档，将这个技能转换为适配 xxx（你的 AI 工具，如 Cursor、Claude Code、Copilot）的规则格式。
+请阅读 .agents/skills/xxx/SKILL.md 及其同目录的 references/ 参考文档，将这个技能转换为适配 xxx（你的 AI 工具，如 Cursor、Claude Code、Copilot）的规则格式。
 
 转换要求：
-1. 保留技能的描述、触发条件、工作流程与硬性规范，不得遗漏或改写；
+1. 保留技能的硬性规则、触发条件与执行流程，不得遗漏或改写；
 2. references/ 下的模板与对照表原样复制，只调整引用路径；
-3. scripts/ 下的脚本不转换，保留原始路径引用。
+3. scripts/ 下的脚本（如有）不转换，保留原始路径引用。
 ```
 
-## code-generator
+## request-best-practices
 
-**作用**：标准业务模块全栈脚手架，支持纯分页、树形、主子表三种形态，分别参照 `config`、`dept` 等既有模块的实现规范。
+**作用**：约束 `apps/admin` 接口请求层的写法——请求类、接口模块、类型定义、文件上传下载导出，保证全项目一个口径。
 
-**触发条件**：新增业务模块、实现标准增删改查、搭建模块脚手架。
+**触发条件**：涉及 `axios`、`@/utils/request`、`src/api` 下的接口模块、接口类型定义、文件上传 / 下载 / 导出的任务。
 
-**注意事项**：
+**硬性规则（第一节，优先级最高）**：
 
-- 仅适用于标准 CRUD 模块；`file`、`job`、`loginlock` 等含特殊语义的模块不适用，需手工实现
-- 字段配置表（类型、查询方式、控件、字典绑定、是否必填等）未经逐字段确认前，技能禁止写代码——务必认真核对
-- 写操作端点自动挂 `@RequirePermissions` 权限码与 `@Operlog` 操作日志；init.sql 只追加菜单与按钮权限行，表结构靠 `MYSQL_SYNCHRONIZE=true` 自动同步
-- 生成后运行对账脚本自检（新文件需先 `git add`）：
+- 接口模块一律 `export class XxxRequest` + `static` 方法，类只作静态方法容器，不实例化；无实体语义的工具类用 `abstract class`（如 `UploadRequest`），阻止 `new`
+- 类名与文件名对应（`user.request.ts` → `UserRequest`），按业务域分文件：`src/api/system/`、`src/api/monitor/`，跨域放 `src/api/common/`
+- 只写相对路径，不以 `/api` 或域名开头（`baseURL` 已由 `VITE_BASE_API` 配置）
+- 接口类型定义在 `src/types/api/**`，通过 `src/types/index.ts` 聚合；`ApiResponse`、`BaseEntity`、`PaginationParams`、`PaginationResult` 是全局类型，不需要 import
+- 项目没有 ESLint，类型检查靠 `vue-tsc -b`，且 `noUnusedLocals` / `noUnusedParameters` 已开启
 
-```bash
-node .codebuddy/skills/code-generator/scripts/checklist.mjs
-```
+**参考文档**：`references/api-module.md`（接口模块写法）、`references/request-layer.md`（请求层与拦截器）、`references/file-transfer.md`（上传下载导出）。
 
-## batch-sort
+## vue-best-practices
 
-**作用**：为任何带排序字段的模块添加「行内排序 + 批量保存」，与菜单管理的排序交互一致。
+**作用**：约束 `apps/admin` 的 Vue 3 开发规范，覆盖 SFC 结构、响应式、组件通信、路由、状态管理、全局组件与自动导入。
 
-**触发条件**：要求为模块添加排序功能、批量排序、保存排序、添加 `update/sort` 接口。
+**触发条件**：涉及 Vue、`.vue` 文件、Vue Router、Pinia、Vite 的任务。
 
-**注意事项**：
+**硬性规则（第一节，优先级最高）**：
 
-- 排序字段名以实际实体为准（如 `deptSort` / `roleSort`），技能会先探查再动手，不要在需求里凭记忆写错字段名
-- 定稿规范不可偏离：请求体为裸数组 `[{ id, xxxSort }]`；空数组时后端抛 `BusinessException('未检测到排序修改')`、前端同步拦截；权限复用模块既有 update 码，不新增 sys_menu 记录
-- 排序输入框宽 72px、`size="small"`；「保存排序」按钮放「新增」之后、warning 色、无变更时禁用
-- 已知坑：改 ProTable columns 严防双逗号（运行时崩溃且 vue-tsc 不报错）；slot 列不写 `prop`；树表排序列宽 90 → 130
+- 默认 Composition API + `<script setup lang="ts">`，项目是纯 SPA，不使用 SSR / Nuxt
+- SFC 顺序固定为 `<template>` → `<script setup>` → `<style lang="scss" scoped>`，样式用类选择器、kebab-case，层级用 BEM 的 `&__element` 嵌套
+- `defineOptions({ name })` 写在 `<script setup>` 首行、import 之前，是否书写取决于组件身份（路由页面与全局组件必须写，页面内局部组件按需）
+- 代码风格：无分号、单引号、2 空格缩进、`printWidth: 220`、`trailingComma: "all"`；无 ESLint，类型检查靠 `vue-tsc -b`
+- 全局组件在 `src/components/` 下开发、在 `src/plugins/modules/global-component.ts` 集中注册，模板中直接写标签，禁止 `import` 后局部注册
+- Vue / Pinia / Vue Router / `@vueuse/core` 的 API、`src/store/modules` 与 `src/hooks` 的导出由自动导入插件提供，禁止重复 import
 
-## apipost-doc-sync
-
-**作用**：把 `apps/server/src/modules/**` 全部控制器端点生成 Apipost 兼容文档 JSON（OpenAPI 3.0 + `x-*` 扩展），支持无基线全量生成或基于 Apipost 导出 JSON 的幂等合并。
-
-**触发条件**：生成/更新接口文档、同步新增端点进文档、核对文档与代码差异。
-
-**注意事项**：
-
-- 端点定义只改 `scripts/sync-openapi.mjs` 的 `DEFS` 区，helper 区勿动，禁止手写整份 JSON
-- 接口名必须纯汉字且不超过 8 字，违例脚本直接退出
-- 文档示例数据从实体、service 返回文案、常量中提取，禁止编造
-- 输出固定为项目根目录 `接口文档_时间戳.json`，基线文件不会被改动；合并模式已存在的 path+method 自动跳过，`--force` 才覆盖
-- 生成后在 Apipost 重新导入并抽查 2~3 个新增条目
-
-```bash
-# 无基线：全量生成
-node .codebuddy/skills/apipost-doc-sync/scripts/sync-openapi.mjs
-
-# 有基线：幂等合并
-node .codebuddy/skills/apipost-doc-sync/scripts/sync-openapi.mjs <基线json>
-```
-
-## cache-usage
-
-**作用**：前端本地缓存的使用与封装规范——禁止裸调 `localStorage` / `sessionStorage`，一切持久化经 `StorageCache`（自动前缀、TTL、JSON 序列化）+ 领域 `xxx.cache.ts` 两层封装。
-
-**触发条件**：缓存/持久化数据、新增 `xxx.cache` 封装、token / 登录参数 / 标签页 / 列显隐等本地存储相关任务，或询问缓存封装方式。
-
-## excel-import
-
-**作用**：为任意业务模块添加与用户管理定稿版一致的 Excel 导入功能：下载导入模板（字典列自动下拉）+ 上传 `.xlsx` 导入 + 可选覆盖更新，自动适配模块的实体、权限码与关联字段形态。
-
-**触发条件**：为模块添加导入功能、导入模板、批量导入、`importData` / `importTemplate` 接口、导入弹窗。
+**参考文档**：`references/` 下 15 篇，涵盖 SFC、响应式、组件插槽与属性透传、异步组件、组合式函数、指令、状态管理、渲染函数、性能等主题；动画、KeepAlive、Suspense、SSR 等项目未使用，相关参考未收录。
 
 ## 自定义技能
 
-在 `.codebuddy/skills/` 下新建目录，编写 `SKILL.md`（描述 + 触发条件 + 工作流程 + 硬性规范），可选附 `references/` 参考文档与 `scripts/` 校验脚本。写法参照仓库内现有技能。
+在 `.agents/skills/` 下新建目录，编写 `SKILL.md`（frontmatter 描述 + 触发条件 + 硬性规则 + 执行流程），可选附 `references/` 参考文档与 `scripts/` 校验脚本。写法参照仓库内现有技能。
+
+::::: tip 与 AI 的其它约定
+`AGENTS.md` 里还记录了回复语言、写代码前先描述方案、全局组件与自动导入的使用限制、变量命名要求等协作约定；`.agents/memory/` 存放按日期迭代的项目记忆与总索引 `MEMORY.md`。使用支持读取项目规则的 AI 工具时，让它一并读取这两处即可。
+:::::

@@ -92,9 +92,10 @@ declare module 'vue' {
 
 ## 是否需要全局注册
 
-全局注册会让组件进入主包并常驻可用，不要滥用：
+全局注册会让组件常驻可用，不要滥用：
 
 - **跨页面复用的通用组件**（表格、分页、字典回显等）→ 放 `src/components/` 全局注册
+- **体积较大、首屏用不到的组件**（图表、弹窗类）→ 全局注册时用 `defineAsyncComponent` 异步加载，渲染到时才拉取对应 chunk；现有 `ProChart` / `CrontabDialog` / `IconSelect` 就是异步注册
 - **仅单个页面使用的业务组件**（如用户编辑弹窗）→ 放页面同级 `components/` 目录，局部 `import` 引入即可
 
 ::::: tip
