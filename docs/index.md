@@ -6,7 +6,7 @@ hero:
   text: 全 TypeScript 中后台管理系统模板
   tagline: Vue 3 + Element Plus + NestJS 12 + TypeORM · 权限模型完整落地 · 容器化开箱可用
   image:
-    src: /images/logo.png
+    src: /images/logo.svg
     alt: logo
   actions:
     - theme: brand
@@ -26,6 +26,9 @@ features:
   - icon: 🔐
     title: 权限模型完整落地
     details: RBAC 用户 / 角色 / 菜单三级权限体系，菜单、按钮、接口三级粒度鉴权，支持按部门划分数据权限。
+  - icon: 🛡️
+    title: 安全内建
+    details: UUID 主键防枚举遍历，Argon2 密码哈希，JWT + 一次性验证码，登录失败锁定与接口限流双防线，真实 IP 防伪造，操作与登录日志全量留痕。
   - icon: 📦
     title: 中后台标配功能
     details: 字典管理、文件管理（分片 / 秒传 / 断点续传）、服务与缓存监控、在线用户、定时任务、操作与登录日志、表格打印。

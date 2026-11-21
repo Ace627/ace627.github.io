@@ -9,7 +9,7 @@ export default defineConfig({
   description: '基于 Vue 3 + NestJS 11 全 TypeScript 技术栈的中后台管理系统模板',
   head: [
     ['link', { rel: 'stylesheet', href: 'https://cdn.bootcdn.net/ajax/libs/lxgw-wenkai-webfont/1.6.0/style.min.css' }],
-    ['link', { rel: 'icon', href: '/images/logo.png' }],
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/images/logo.svg' }],
     // ['link', { rel: 'stylesheet', href: 'https://cdn.bootcdn.net/ajax/libs/lxgw-wenkai-screen-webfont/1.7.0/style.min.css' }]
   ],
 
@@ -21,7 +21,7 @@ export default defineConfig({
   lastUpdated: true,
 
   themeConfig: {
-    logo: '/images/logo.png',
+    logo: '/images/logo.svg',
     nav: navbar,
     sidebar: sidebar,
     sidebarMenuLabel: '菜单',

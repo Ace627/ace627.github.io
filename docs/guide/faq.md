@@ -64,6 +64,33 @@ pnpm migration:run
 
 `init-db.mjs` / `pnpm db:init` 只用于空库首装，已上线的库请走上面的增量迁移，详见 [生产部署](./deployment#表结构变更)。
 
+## 如何把主键从 UUID 切换为 int
+
+模板默认使用 UUID 主键。如果新项目希望数据库和代码统一使用 `int` 自增主键，可在**新克隆且尚未初始化数据库**时，在仓库根目录执行：
+
+```bash
+# 预览将要修改的文件与种子主键映射
+node scripts/convert-pk-to-int.mjs --dry-run
+
+# 执行转换（二选一）
+node scripts/convert-pk-to-int.mjs --apply
+
+# 或：依赖已安装时，转换后立即执行前后端构建验证
+node scripts/convert-pk-to-int.mjs --apply --verify
+```
+
+脚本会同时修改：
+
+- 后端实体的主键、外键与 `@PrimaryGeneratedColumn`
+- DTO、Controller、Service 中的 ID 类型与参数解析
+- 前端 API 类型、页面 ID 处理与树根节点
+- `resource/init.sql` 的主键列、外键列、种子数据和 `ancestors` 链
+
+> - 仅支持新克隆 + 空库。已经执行过 `pnpm db:init`、仓库中已有迁移文件，或数据库中已有 UUID 数据时，脚本会拒绝执行。
+> - 执行顺序必须是：先转换，再 `pnpm install` 和 `pnpm db:init`。
+> - 转换前请保持工作区没有未提交的已跟踪改动，便于用 `git checkout -- .` 回滚。
+> - 存量 UUID 数据库不做一键迁移，需要单独设计数据迁移方案。
+
 ## 如何设置接口的超时时间
 
 **全局超时时间设置** `apps/admin/.env`
