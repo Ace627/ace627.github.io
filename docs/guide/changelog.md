@@ -4,9 +4,9 @@ pageClass: page-changelog
 
 # 更新日志
 
-## 2026-11-19 v1.2.0
+## 2026-11-22 v1.2.0
 
-> Git Commit:
+> Git Commit: 3a718c53501ffdde0fa7d28d3f4bef5119308b96
 
 - ✨ 新增用户管理 Excel 批量导入功能，支持下载模板、按账号覆盖更新
 - ✨ RightToolbar 新增表格打印功能，支持打印当前页或勾选数据，页面无须额外代码
